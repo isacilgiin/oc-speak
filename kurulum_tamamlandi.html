@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kurulum Başarılı - Opencart Sesli Not Asistanı</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            max-width: 580px;
+            width: 100%;
+            padding: 35px 40px;
+            text-align: center;
+        }
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 18px;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 0 0 8px;
+            color: #0f172a;
+        }
+        p.subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0 0 25px;
+        }
+        .steps {
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 25px;
+        }
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .step-item:last-child { margin-bottom: 0; }
+        .step-num {
+            background: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .step-content {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #334155;
+        }
+        .copy-box {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 6px;
+            justify-content: space-between;
+        }
+        .copy-box code {
+            font-family: Consolas, monospace;
+            color: #2563eb;
+            font-size: 13px;
+        }
+        .btn-copy {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-copy:hover { background: #1d4ed8; }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .footer {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="success-icon">✓</div>
+        <h1>Kurulum ve Dosyalar Hazır!</h1>
+        <p class="subtitle">Eklenti dosyaları <strong>C:\speak</strong> klasörüne başarıyla kuruldu.</p>
+
+        <div class="steps">
+            <div class="step-item">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    Chrome adres çubuğuna şunu yapıştırıp <strong>Enter</strong>'a basın:
+                    <div class="copy-box">
+                        <code id="ext-url">chrome://extensions</code>
+                        <button class="btn-copy" onclick="copyUrl()">Kopyala</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    Açılan sayfanın sağ üst köşesindeki <span class="badge">Geliştirici Modu</span> anahtarını açın.
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    Sol üstteki <span class="badge">Paketlenmemiş öğe yükle</span> butonuna basıp <strong>C:\speak</strong> klasörünü seçin.
+                </div>
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: #16a34a; font-weight: 600; margin: 0;">
+            🚀 Bu adımı yalnızca 1 kez yapmanız yeterlidir. Sonraki tüm güncellemeler otomatik gerçekleşecektir!
+        </p>
+
+        <div class="footer">
+            Alternet Yazılım &copy; 2026
+        </div>
+    </div>
+
+    <script>
+        function copyUrl() {
+            navigator.clipboard.writeText('chrome://extensions');
+            const btn = document.querySelector('.btn-copy');
+            btn.textContent = 'Kopyalandı!';
+            btn.style.background = '#16a34a';
+            setTimeout(() => {
+                btn.textContent = 'Kopyala';
+                btn.style.background = '#2563eb';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

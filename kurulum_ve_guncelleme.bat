@@ -42,20 +42,26 @@ echo.
 echo ==============================================================
 echo   [TEBRIKLER] Kurulum ve Guncelleme Basariyla Tamamlandi!
 echo ==============================================================
+:: chrome://extensions adresini otomatik panoya kopyala
+echo | set /p="chrome://extensions" | clip
+
 echo.
 echo  1. Dosyalar C:\speak klasorune yerlestirildi / guncellendi.
 echo  2. Netsipp hizli arama protokolu sisteme tanitildi.
 echo  3. Arka plan otomatik guncelleme servisi devreye alindi.
-echo     (GitHub'a yeni surum yuklendiginde kendi kendine guncellenir)
 echo.
-echo  Chrome aciliyor... 
-echo  Acilan sayfada Gelistirici Modu'nu acip Paketlenmemis oge yukle 
-echo  diyerek C:\speak klasorunu secmeniz yeterlidir.
+echo  [BILGI] Google Chrome guvenlik kurallari geregi disaridan
+echo  chrome:// linklerini otomatik acmaya izin vermez.
+echo  Bu yuzden 'chrome://extensions' adresi panonuza KOPYALANDI!
+echo.
+echo  Chrome'da acilan rehber sayfasindaki adimlari takip edebilir
+echo  veya yeni sekme acip Ctrl+V ile adrese gidebilirsiniz.
 echo.
 echo ==============================================================
 echo.
 
-:: Chrome Extensions Sayfasini Ac
-start "" "chrome.exe" "chrome://extensions"
+:: Rehber Sayfasini ve C:\speak Klasorunu Ac
+start "" "chrome.exe" "%TARGET_DIR%\kurulum_tamamlandi.html"
+start "" explorer.exe "%TARGET_DIR%"
 
 pause
