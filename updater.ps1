@@ -28,11 +28,7 @@ $ZipUrl     = "https://github.com/$RepoOwner/$RepoName/archive/refs/heads/$Branc
 # 2. Uzak Sürüm Kontrolü
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $webClient = New-Object System.Net.WebClient
-    $webClient.Encoding = [System.Text.Encoding]::UTF8
-    $jsonContent = $webClient.DownloadString("$VersionUrl?t=$([DateTime]::UtcNow.Ticks)")
-    
-    $remoteData = $jsonContent | ConvertFrom-Json
+    $remoteData = Invoke-RestMethod -Uri $VersionUrl -UseBasicParsing -Headers @{ "Cache-Control" = "no-cache" }
     $remoteVersion = $remoteData.version
 } catch {
     Write-Log "Uzak sürüm bilgisi alınamadı (İnternet veya repo kontrolü yapınız): $($_.Exception.Message)"
