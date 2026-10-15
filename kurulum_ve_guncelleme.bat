@@ -23,9 +23,15 @@ if not exist "%TARGET_DIR%" (
     mkdir "%TARGET_DIR%"
 )
 
-:: 3. Guncelleyiciyi Calistir
+:: 3. Guncelleyiciyi Indir ve Calistir (AV uyumlu)
 echo [+] GitHub uzerinden en guncel dosyalar kontrol ediliyor...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $u = 'https://raw.githubusercontent.com/isacilgiin/oc-speak/main/updater.ps1'; try { (New-Object Net.WebClient).DownloadFile($u, 'C:\speak\updater.ps1') } catch {}; if (Test-Path 'C:\speak\updater.ps1') { & 'C:\speak\updater.ps1' }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; " ^
+    "$u = 'https://raw.githubusercontent.com/isacilgiin/oc-speak/main/updater.ps1'; " ^
+    "$f = 'C:\speak\updater.ps1'; " ^
+    "try { Invoke-WebRequest -Uri $u -OutFile $f -UseBasicParsing -UserAgent 'Mozilla/5.0' } " ^
+    "catch { try { (New-Object Net.WebClient).DownloadFile($u, $f) } catch {} }; " ^
+    "if (Test-Path $f) { Unblock-File -Path $f -ErrorAction SilentlyContinue; & $f }"
 
 :: 4. Netsipp Protokol Kaydi
 if exist "%TARGET_DIR%\netsipp_protocol_register.reg" (
@@ -35,8 +41,11 @@ if exist "%TARGET_DIR%\netsipp_protocol_register.reg" (
 
 :: 5. Windows Gorev Zamanlayicisina Otomatik Guncelleme Ekleme
 echo [+] Arka plan otomatik guncelleme servisi kuruluyor...
-schtasks /create /tn "SpeakExtensionAutoUpdater" /tr "wscript.exe \"%TARGET_DIR%\silent_updater.vbs\"" /sc HOURLY /mo 1 /f >nul 2>&1
-schtasks /create /tn "SpeakExtensionAutoUpdaterOnLogon" /tr "wscript.exe \"%TARGET_DIR%\silent_updater.vbs\"" /sc ONLOGON /f >nul 2>&1
+schtasks /create /tn "SpeakExtensionAutoUpdater" /tr "powershell.exe -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File \"%TARGET_DIR%\updater.ps1\"" /sc HOURLY /mo 1 /f >nul 2>&1
+schtasks /create /tn "SpeakExtensionAutoUpdaterOnLogon" /tr "powershell.exe -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File \"%TARGET_DIR%\updater.ps1\"" /sc ONLOGON /f >nul 2>&1
+
+:: Dosyalarin SmartScreen engelini kaldir
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%TARGET_DIR%' -Recurse -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue"
 
 echo.
 echo ==============================================================

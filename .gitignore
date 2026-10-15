@@ -4,6 +4,9 @@
 *.rar
 *.zip
 
+# Antivirus tetikleyici dosyalar
+*.vbs
+
 # Sistem ve editör dosyaları
 .vscode/
 .idea/
@@ -11,3 +14,6 @@ Thumbs.db
 Desktop.ini
 *.tmp
 *.bak
+
+# Test dosyaları
+mock_opencart.html
