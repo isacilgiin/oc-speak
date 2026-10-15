@@ -1,0 +1,354 @@
+/* Modern Control Panel Styles */
+#speech-control-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-wrap: wrap;
+    /* allow wrapping for preview */
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.speech-preview {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    font-style: italic;
+    color: #666;
+    font-size: 13px;
+    display: none;
+    /* hidden by default */
+    border-left: 3px solid #667eea;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#speech-control-panel.recording-active {
+    border-color: #ff4d4d;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+}
+
+.speech-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.status-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background-color: #e0e0e0;
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+.status-badge.status-listening {
+    background-color: #ff4d4d;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+.status-badge.status-error {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+.speech-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Toggle Switch */
+.mode-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 10px;
+}
+
+.switch-label {
+    font-size: 11px;
+    color: #666;
+    font-weight: 500;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(14px);
+}
+
+/* Button States */
+.btn-stop-mode {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%) !important;
+    animation: pulse 2s infinite;
+}
+
+.btn-active-ptt {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%) !important;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.speech-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    color: white;
+    outline: none;
+    min-width: 90px;
+    justify-content: center;
+}
+
+.speech-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+
+.speech-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.speech-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Gradient Definitions */
+.btn-record {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.btn-stop {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+}
+
+.btn-read {
+    background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+}
+
+.btn-vpn {
+    background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+    font-weight: 600;
+}
+
+.btn-vpn:hover {
+    background: linear-gradient(135deg, #0770c2 0%, #5844d8 100%);
+    box-shadow: 0 3px 10px rgba(108, 92, 231, 0.35);
+}
+
+.btn-vpn.btn-success-flash {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%) !important;
+    transform: scale(1.02);
+}
+
+.btn-script {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    font-weight: 600;
+}
+
+.btn-script:hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.35);
+}
+
+.btn-script.active-open {
+    background: linear-gradient(135deg, #b45309 0%, #78350f 100%) !important;
+}
+
+/* Teleprompter / Müşteri Onay Metni Kartı */
+.vpn-script-card {
+    width: 100%;
+    margin-top: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #f59e0b;
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    animation: fadeIn 0.3s ease;
+    text-align: left;
+}
+
+.vpn-script-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 13.5px;
+}
+
+.vpn-script-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-script-action {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-script-action:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+.btn-script-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0 6px;
+    transition: color 0.2s;
+}
+
+.btn-script-close:hover {
+    color: #ef4444;
+}
+
+.vpn-script-body {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #334155;
+}
+
+.vpn-script-body p {
+    margin: 0 0 7px 0;
+}
+
+.vpn-script-list {
+    margin: 6px 0 10px 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.vpn-script-list li {
+    padding: 4px 8px;
+    background: #f8fafc;
+    border-radius: 5px;
+    margin-bottom: 4px;
+    border-left: 2px solid #cbd5e1;
+}
+
+.vpn-script-question {
+    margin-top: 10px !important;
+    padding: 6px 10px;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 6px;
+    color: #b91c1c !important;
+    font-size: 13.5px;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Force FontAwesome font family for icons if needed, 
+   though bootstrap usually handles it. 
+   Just a safeguard for the icons inside buttons */
+.speech-btn i {
+    font-style: normal;
+}

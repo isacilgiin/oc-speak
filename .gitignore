@@ -1,0 +1,13 @@
+# Müşteri verileri ve geçici test dökümleri (KVKK Güvenliği İçin)
+*.txt
+*.log
+*.rar
+*.zip
+
+# Sistem ve editör dosyaları
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+*.tmp
+*.bak

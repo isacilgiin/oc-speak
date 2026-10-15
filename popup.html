@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            width: 260px;
+            padding: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+        }
+
+        h3 {
+            margin: 0 0 5px 0;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn-update:hover {
+            opacity: 0.95;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+
+        .status-msg {
+            font-size: 11px;
+            color: #10b981;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .footer {
+            margin-top: 15px;
+            font-size: 11px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Sesli Asistan</h3>
+    <span class="version-badge" id="version-text">v1.1.0</span>
+    
+    <p>OpenCart müşteri notları ve EczaneVPN asistanı aktif ve çalışıyor.</p>
+    
+    <button class="btn-update" id="btn-check-update">🔄 Güncellemeleri Denetle</button>
+    <div id="status-msg" class="status-msg">Kontrol ediliyor...</div>
+
+    <div class="footer">
+        Alternet Yazılım
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

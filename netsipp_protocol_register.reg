@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\netsipp]
+@="URL:Netsipp Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\netsipp\shell]
+
+[HKEY_CLASSES_ROOT\netsipp\shell\open]
+
+[HKEY_CLASSES_ROOT\netsipp\shell\open\command]
+@="\"c:\\speak\\netsipp_launcher.bat\" \"%1\""
