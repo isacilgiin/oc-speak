@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "Opencart Sesli Not Asistanı",
-  "changelog": "EczaneVPN onay notu ve müşteri sözlü onay teleprompteri eklendi."
+  "changelog": "Sözlü onay metninde soyisim gizlenerek sadece personelin ilk isminin okunması sağlandı."
 }

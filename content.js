@@ -559,8 +559,22 @@ function getPersonnelProperName() {
     return 'İsa Çılgın';
 }
 
+function getPersonnelFirstName() {
+    const fullName = getPersonnelProperName();
+    if (!fullName) return 'İsa';
+    const parts = fullName.trim().split(/\s+/);
+    // Son kelime soyisim kabul edilir, öncesi isim(ler)dir (örn: 'İsa Çılgın' -> 'İsa', 'Mehmet Ali Yılmaz' -> 'Mehmet Ali')
+    let firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : parts[0];
+
+    // İsim tamamı büyük harfse (örn: İSA veya MEHMET ALİ) baş harfleri büyük, kalanı küçük yap
+    if (firstName === firstName.toLocaleUpperCase('tr-TR')) {
+        firstName = firstName.split(' ').map(w => w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1).toLocaleLowerCase('tr-TR')).join(' ');
+    }
+    return firstName;
+}
+
 function getEczaneVpnScriptPlainText() {
-    const personnel = getPersonnelProperName();
+    const personnel = getPersonnelFirstName();
     return `Merhaba, ben Alternet Yazılım teknik ekibinden ${personnel}.
 Kalite standartlarımız gereği bu görüşme kayıt altına alınmaktadır.
 Satın aldığınız EczaneVpn ürününün kurulumu için arıyorum. Kuruluma başlamadan önce birkaç şartı hatırlatıp sözlü onayınızı almam gerekiyor:
@@ -572,7 +586,7 @@ Bu şartları kabul ediyor musunuz?`;
 
 function renderVpnScriptCard(scriptBody) {
     if (!scriptBody) return;
-    const personnel = getPersonnelProperName();
+    const personnel = getPersonnelFirstName();
     scriptBody.innerHTML = `
         <p>Merhaba, ben Alternet Yazılım teknik ekibinden <strong>${personnel}</strong>.</p>
         <p>Kalite standartlarımız gereği bu görüşme kayıt altına alınmaktadır.</p>
