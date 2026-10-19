@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Wallpaper Controls
+    // Wallpaper & Dark Mode Controls
     const wpToggle = document.getElementById('popup-wp-toggle');
+    const darkToggle = document.getElementById('popup-dark-toggle');
     const btnRandomWp = document.getElementById('btn-popup-random-wp');
     const btnBlurToggle = document.getElementById('btn-popup-blur-toggle');
     const btnOpenGallery = document.getElementById('btn-popup-open-gallery');
@@ -38,8 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial settings
     if (chrome.storage && chrome.storage.local) {
         chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
-            const settings = result.oc_wallpaper_settings || { enabled: true };
+            const settings = result.oc_wallpaper_settings || { enabled: true, darkMode: false };
             if (wpToggle) wpToggle.checked = (settings.enabled !== false);
+            if (darkToggle) darkToggle.checked = !!settings.darkMode;
         });
     }
 
@@ -50,6 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
             chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
                 const settings = result.oc_wallpaper_settings || {};
                 settings.enabled = isEnabled;
+                chrome.storage.local.set({ oc_wallpaper_settings: settings });
+            });
+        });
+    }
+
+    // Toggle Dark Mode
+    if (darkToggle) {
+        darkToggle.addEventListener('change', () => {
+            const isDark = darkToggle.checked;
+            chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
+                const settings = result.oc_wallpaper_settings || {};
+                settings.darkMode = isDark;
                 chrome.storage.local.set({ oc_wallpaper_settings: settings });
             });
         });

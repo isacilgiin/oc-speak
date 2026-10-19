@@ -786,6 +786,7 @@ const WALLPAPER_PRESETS = [
 
 const DEFAULT_WALLPAPER_SETTINGS = {
     enabled: true,
+    darkMode: false,
     imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80',
     overlayOpacity: 0.25,
     wallpaperBlur: 0,
@@ -849,12 +850,19 @@ function applyWallpaper(settings) {
         document.body.appendChild(overlay);
     }
 
+    // Dark Mode class toggle
+    if (settings && settings.darkMode) {
+        document.body.classList.add('oc-dark-mode');
+    } else {
+        document.body.classList.remove('oc-dark-mode');
+    }
+
     if (settings && settings.enabled && settings.imageUrl) {
         document.body.classList.add('oc-wallpaper-active');
         bg.style.backgroundImage = `url("${settings.imageUrl}")`;
         document.documentElement.style.setProperty('--oc-wp-overlay-opacity', settings.overlayOpacity ?? 0.25);
         document.documentElement.style.setProperty('--oc-wp-blur', (settings.wallpaperBlur ?? 0) + 'px');
-        document.documentElement.style.setProperty('--oc-wp-card-opacity', settings.cardOpacity ?? 0.90);
+        document.documentElement.style.setProperty('--oc-wp-card-opacity', settings.cardOpacity ?? 0.78);
     } else {
         document.body.classList.remove('oc-wallpaper-active');
     }
@@ -932,6 +940,13 @@ function createWallpaperModal() {
             <h4><i class="fa fa-picture-o"></i> HD Duvar Kağıdı Galerisi</h4>
             <div class="oc-wp-header-controls">
                 <div class="oc-wp-toggle-wrapper">
+                    <span>🌙 Karanlık:</span>
+                    <label class="switch-wp" style="margin: 0 4px;">
+                        <input type="checkbox" id="oc-wp-modal-dark-toggle">
+                        <span class="slider-wp"></span>
+                    </label>
+                </div>
+                <div class="oc-wp-toggle-wrapper">
                     <span>Arka Plan:</span>
                     <label class="switch-wp" style="margin: 0 4px;">
                         <input type="checkbox" id="oc-wp-modal-toggle">
@@ -1001,6 +1016,13 @@ function createWallpaperModal() {
     modalToggle.onchange = () => {
         saveWallpaperSettings({ enabled: modalToggle.checked });
     };
+
+    const modalDarkToggle = document.getElementById('oc-wp-modal-dark-toggle');
+    if (modalDarkToggle) {
+        modalDarkToggle.onchange = () => {
+            saveWallpaperSettings({ darkMode: modalDarkToggle.checked });
+        };
+    }
 
     document.getElementById('oc-wp-random-btn').onclick = () => {
         setRandomWallpaper();
@@ -1111,6 +1133,9 @@ function updateWallpaperModalUI() {
     const modalToggle = document.getElementById('oc-wp-modal-toggle');
     if (modalToggle) modalToggle.checked = (currentWallpaperSettings.enabled !== false);
 
+    const modalDarkToggle = document.getElementById('oc-wp-modal-dark-toggle');
+    if (modalDarkToggle) modalDarkToggle.checked = !!currentWallpaperSettings.darkMode;
+
     const sliderOverlay = document.getElementById('oc-slider-overlay');
     const valOverlay = document.getElementById('oc-val-overlay');
     if (sliderOverlay && valOverlay) {
@@ -1128,8 +1153,8 @@ function updateWallpaperModalUI() {
     const sliderCard = document.getElementById('oc-slider-card');
     const valCard = document.getElementById('oc-val-card');
     if (sliderCard && valCard) {
-        sliderCard.value = currentWallpaperSettings.cardOpacity ?? 0.90;
-        valCard.textContent = Math.round((currentWallpaperSettings.cardOpacity ?? 0.90) * 100) + '%';
+        sliderCard.value = currentWallpaperSettings.cardOpacity ?? 0.78;
+        valCard.textContent = Math.round((currentWallpaperSettings.cardOpacity ?? 0.78) * 100) + '%';
     }
 
     renderWallpaperGrid(activeWpCategory);

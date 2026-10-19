@@ -1,5 +1,5 @@
 {
-  "version": "1.2.1",
+  "version": "1.3.0",
   "name": "Opencart Sesli Not Asistanı",
-  "changelog": "Tablolar, paneller ve listeler için şeffaf cam efekti (glassmorphism) ve arkaplan görünürlüğü iyileştirildi."
+  "changelog": "Açılıp kapatılabilir Karanlık Mod (Dark Mode) ve gece cam efekti eklendi."
 }
