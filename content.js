@@ -789,7 +789,7 @@ const DEFAULT_WALLPAPER_SETTINGS = {
     imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80',
     overlayOpacity: 0.25,
     wallpaperBlur: 0,
-    cardOpacity: 0.90
+    cardOpacity: 0.78
 };
 
 let currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS };
@@ -799,6 +799,10 @@ function getWallpaperSettings(callback) {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
         chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
             const settings = result.oc_wallpaper_settings || DEFAULT_WALLPAPER_SETTINGS;
+            // Upgrade old opaque 0.90 to 0.78 for clear glassmorphism
+            if (settings.cardOpacity === 0.90 || !settings.cardOpacity) {
+                settings.cardOpacity = 0.78;
+            }
             currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...settings };
             if (callback) callback(currentWallpaperSettings);
         });
@@ -806,7 +810,11 @@ function getWallpaperSettings(callback) {
         try {
             const local = localStorage.getItem('oc_wallpaper_settings');
             if (local) {
-                currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...JSON.parse(local) };
+                const parsed = JSON.parse(local);
+                if (parsed.cardOpacity === 0.90 || !parsed.cardOpacity) {
+                    parsed.cardOpacity = 0.78;
+                }
+                currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...parsed };
             }
         } catch (e) {}
         if (callback) callback(currentWallpaperSettings);
@@ -971,9 +979,9 @@ function createWallpaperModal() {
                 <div class="oc-wp-slider-group">
                     <div class="oc-wp-slider-header">
                         <span>🪟 Panel Saydamlığı</span>
-                        <span id="oc-val-card">90%</span>
+                        <span id="oc-val-card">78%</span>
                     </div>
-                    <input type="range" class="oc-wp-slider" id="oc-slider-card" min="0.70" max="1.0" step="0.02" value="0.90">
+                    <input type="range" class="oc-wp-slider" id="oc-slider-card" min="0.40" max="0.95" step="0.02" value="0.78">
                 </div>
             </div>
         </div>

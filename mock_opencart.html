@@ -2,110 +2,232 @@
 <html dir="ltr" lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Mock OpenCart - Sipariş ve EczaneVPN Testi</title>
-<!-- Bootstrap & Font Awesome mocks for styling context -->
+<title>Mock OpenCart - Alternet Yönetim Testi</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="styles.css">
 <style>
-    body { background-color: #f5f5f5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    #column-left { background: #2c3e50; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-    #profile { display: flex; align-items: center; gap: 10px; }
-    #profile h4 { margin: 0; color: #ecf0f1; font-weight: bold; }
-    #profile small { color: #bdc3c7; }
-    #content { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    textarea { resize: vertical; }
-    .customer-panel { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
+    body { background-color: #f2f2f2; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    #header { background: #0f172a; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+    #column-left { background: #1e293b; color: white; min-height: 100vh; padding: 20px 15px; }
+    #profile { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+    #profile h4 { margin: 0; color: #f8fafc; font-size: 15px; font-weight: bold; }
+    #profile small { color: #94a3b8; font-size: 12px; }
+    #menu li { list-style: none; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    #menu li a { color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    #menu li a:hover { color: #38bdf8; }
 </style>
 </head>
 <body>
 
-<div id="container" class="container-fluid">
-  <!-- Sol Menü / Personel Profili (OpenCart Simülasyonu) -->
-  <div class="row">
-    <div class="col-sm-3">
+<div id="header">
+    <div style="font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 10px;">
+        <i class="fa fa-bars"></i>
+        <span>Alternet Yazılım Yönetim</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px; font-size: 13px;">
+        <span>İsa Çılgın (Yönetici)</span>
+        <a href="#" style="color: #f87171;"><i class="fa fa-sign-out"></i> Çıkış</a>
+    </div>
+</div>
+
+<div id="container">
+  <div style="display: flex;">
+    <!-- Sol Menü -->
+    <div style="width: 230px; flex-shrink: 0;">
       <nav id="column-left">
         <div id="profile">
-          <i class="fa fa-user-circle fa-2x"></i>
+          <i class="fa fa-user-circle fa-2x" style="color: #38bdf8;"></i>
           <div>
             <h4>İsa Çılgın</h4>
             <small>yönetici</small>
           </div>
         </div>
+        <ul id="menu" style="padding-left: 0;">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Kontrol Paneli</a></li>
+            <li><a href="#"><i class="fa fa-comments"></i> Yorumlar Listesi</a></li>
+            <li><a href="#"><i class="fa fa-folder"></i> Dosyalar</a></li>
+            <li><a href="#"><i class="fa fa-exchange"></i> Havale Takip</a></li>
+            <li><a href="#"><i class="fa fa-wrench"></i> Kurulum Bekleyenler <span class="badge" style="background:#ef4444; float:right;">27</span></a></li>
+            <li><a href="#"><i class="fa fa-shopping-cart"></i> Siparişler</a></li>
+            <li><a href="#"><i class="fa fa-users"></i> İlaçtarif Müşteriler</a></li>
+        </ul>
       </nav>
     </div>
 
     <!-- Ana İçerik -->
-    <div class="col-sm-9">
-      <div id="content">
+    <div style="flex: 1; padding: 20px 30px;" id="content">
+      
+      <!-- Page Header & Breadcrumb -->
+      <div class="page-header">
+        <ul class="breadcrumb">
+            <li><a href="#">Anasayfa</a></li>
+            <li><a href="#">Kurulum Listesi</a></li>
+        </ul>
+        <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;"><i class="fa fa-wrench"></i> Teknik Destek & Kurulum Listesi</h2>
+      </div>
+
+      <!-- Filter Well (Siparişler/Liste filtreleme kutusu) -->
+      <div class="well">
         <div class="row">
-            <div class="col-sm-12">
-                <h3><i class="fa fa-shopping-cart"></i> Sipariş Detayı (#123990)</h3>
-                <hr>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="control-label">Sipariş No</label>
+                    <input type="text" class="form-control" placeholder="Örn: 131090">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="control-label">Müşteri / Eczane Adı</label>
+                    <input type="text" class="form-control" placeholder="Örn: Muharrem Yazıcıoğlu">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="control-label">Sipariş Durumu</label>
+                    <select class="form-control">
+                        <option>Tüm Durumlar</option>
+                        <option>Tamamlandı</option>
+                        <option>Hazırlanıyor</option>
+                    </select>
+                </div>
             </div>
         </div>
-
-        <!-- Müşteri ve Telefon Bilgileri -->
-        <div class="customer-panel">
-            <h4><i class="fa fa-user"></i> Müşteri Bilgileri</h4>
-            <table class="table table-bordered">
-                <tr>
-                    <td style="width: 25%;"><strong>Müşteri Adı:</strong></td>
-                    <td>Yüsra Akgül</td>
-                </tr>
-                <tr>
-                    <td><strong>Cep Telefonu:</strong></td>
-                    <td id="user-telephone">0533 195 96 02</td>
-                    <input type="hidden" id="myInput" value="05331959602">
-                </tr>
-                <tr>
-                    <td><strong>İş Telefonu:</strong></td>
-                    <td id="work-telephone">0416 216 36 44</td>
-                    <input type="hidden" id="myInput2" value="04162163644">
-                </tr>
-            </table>
+        <div class="text-right">
+            <button class="btn btn-primary"><i class="fa fa-search"></i> Süzgeç</button>
         </div>
+      </div>
 
-        <!-- Müşteri Geçmişi Tablosu (Netsipp buton enjeksiyon testi için) -->
-        <div id="history_customer" style="margin-bottom: 20px;">
-            <h4><i class="fa fa-history"></i> Müşteri İletişim Geçmişi</h4>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Tarih</th>
-                        <th>Not / Numara</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>15/10/2026</td>
-                        <td>Teknik Destek &gt; eczanevpn kurulum isteniyor || Çağrı No: 0535-855-53-56</td>
-                    </tr>
-                </tbody>
-            </table>
+      <!-- 3 Kart Yan Yana (Müşteri & Sipariş Detayları) -->
+      <div class="row" style="margin-bottom: 25px;">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-shopping-cart"></i> Sipariş Detayları</h3>
+                </div>
+                <table class="table">
+                    <tr><td><strong>Mağaza:</strong></td><td>Alternet Online Mağaza</td></tr>
+                    <tr><td><strong>Tarih:</strong></td><td>19/10/2026</td></tr>
+                    <tr><td><strong>Ödeme:</strong></td><td>Kredi Kartı ile Ödeme</td></tr>
+                </table>
+            </div>
         </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-user"></i> Müşteri Detayları</h3>
+                </div>
+                <table class="table">
+                    <tr><td><strong>Müşteri:</strong></td><td>Muharrem YAZICIOĞLU</td></tr>
+                    <tr><td><strong>Telefon:</strong></td><td id="user-telephone">0542 434 60 50</td></tr>
+                    <tr><td><strong>Eczane:</strong></td><td>DİLAN ECZANESİ</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-cog"></i> Seçenekler</h3>
+                </div>
+                <table class="table">
+                    <tr><td>Puan</td><td class="text-right">0</td></tr>
+                    <tr><td>Ortak</td><td class="text-right">0,00 TL</td></tr>
+                    <tr><td>Kurulum</td><td class="text-right"><span class="badge" style="background:#10b981;">Yapıldı</span></td></tr>
+                </table>
+            </div>
+        </div>
+      </div>
 
-        <!-- Açıklama Alanı & Eklenti Paneli Hedefi -->
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="tab-pane" id="tab-history_customer">
-              <div class="form-group">
-                <label class="control-label" for="input-comment">Müşteri Notu / Açıklama:</label>
-                <textarea name="comment" rows="6" placeholder="Açıklama veya sesli not..." id="input-comment" class="form-control"></textarea>
-              </div>
-              <div class="text-right" style="margin-top: 10px;">
-                <button id="button-history_customer" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Müşteri Geçmişi Ekle</button>
-              </div>
+      <!-- Kurulum / Teknik Destek Tablosu (Screenshot 1 & 2'deki gibi) -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> Şuan Bekleyen Kurulum Sayısı: 27 (Bugün Eklenen: 69)</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive" id="tableana">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;"><input type="checkbox"></th>
+                            <th>İsim</th>
+                            <th>EczProgram</th>
+                            <th>Eczane</th>
+                            <th>Telefon</th>
+                            <th>İş Telefonu</th>
+                            <th>Ekleme Tarihi</th>
+                            <th>Ekleyen</th>
+                            <th>Aksiyon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>Muharrem YAZICIOĞLU</strong></td>
+                            <td>RXEYS</td>
+                            <td>DİLAN ECZANESİ</td>
+                            <td>0542 434 60 50</td>
+                            <td>0372 378 67 47</td>
+                            <td>2026-10-19 11:04</td>
+                            <td>irem</td>
+                            <td class="text-right">
+                                <button class="btn btn-info btn-xs"><i class="fa fa-wrench"></i> DO</button>
+                                <button class="btn btn-success btn-xs"><i class="fa fa-check"></i> Done</button>
+                                <button class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Bırak</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Son Yorum:</td>
+                            <td colspan="6" class="test">
+                                Bilgi &gt; Fiyat etiketinde fiyat farkı kısmı ayarlardan kapatılsa da her reçeteden aktardığımızda açık geliyor.<br>
+                                <span style="background-color: orange; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px;">Yorumu Yazan Kişi: irem</span>
+                            </td>
+                            <td colspan="2" class="tst2">&gt;&gt; Yorum Zamanı: 2026-10-19 11:20:45</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>Halime Ceren MODA</strong></td>
+                            <td>Botanik</td>
+                            <td>SAĞLIK</td>
+                            <td>0532 432 26 05</td>
+                            <td>0242 722 07 37</td>
+                            <td>2026-10-19 14:15</td>
+                            <td>kamuran</td>
+                            <td class="text-right">
+                                <button class="btn btn-info btn-xs"><i class="fa fa-wrench"></i> DO</button>
+                                <button class="btn btn-success btn-xs"><i class="fa fa-check"></i> Done</button>
+                                <button class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Bırak</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Son Yorum:</td>
+                            <td colspan="6" class="test">
+                                Teknik Destek &gt; Terminal PC yazdırmıyor || Çağrı No: 0532-432-26-05<br>
+                                <span style="background-color: orange; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px;">Yorumu Yazan Kişi: irem</span>
+                            </td>
+                            <td colspan="2" class="tst2">&gt;&gt; Yorum Zamanı: 2026-10-19 14:30:10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+
+      <!-- Sesli Not & Açıklama Alanı -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="tab-pane" id="tab-history_customer">
+            <div class="form-group" style="padding: 15px;">
+              <label class="control-label" for="input-comment">Müşteri Notu / Açıklama:</label>
+              <textarea name="comment" rows="4" placeholder="Açıklama veya sesli not..." id="input-comment" class="form-control"></textarea>
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Eklenti scripti yerel simülasyon testi için -->
 <script src="content.js"></script>
 </body>
 </html>

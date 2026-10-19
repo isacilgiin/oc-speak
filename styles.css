@@ -360,7 +360,7 @@ input:checked+.slider:before {
 :root {
     --oc-wp-overlay-opacity: 0.25;
     --oc-wp-blur: 0px;
-    --oc-wp-card-opacity: 0.90;
+    --oc-wp-card-opacity: 0.78;
 }
 
 #oc-wallpaper-bg {
@@ -403,47 +403,223 @@ body.oc-wallpaper-active {
     background-image: none !important;
 }
 
-/* Glassmorphism on OpenCart Containers */
+/* Ensure all parent layout containers are transparent */
+body.oc-wallpaper-active #container,
 body.oc-wallpaper-active #content,
+body.oc-wallpaper-active .container-fluid,
+body.oc-wallpaper-active .row {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Page Header (Teknik Destek Listesi, breadcrumbs, chart) */
+body.oc-wallpaper-active .page-header {
+    background: rgba(255, 255, 255, var(--oc-wp-card-opacity, 0.78)) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 14px !important;
+    padding: 16px 20px !important;
+    margin-top: 15px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.oc-wallpaper-active .breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 8px !important;
+}
+
+/* Glassmorphism on OpenCart Containers & Cards */
 body.oc-wallpaper-active .panel,
 body.oc-wallpaper-active .panel-default,
 body.oc-wallpaper-active .customer-panel,
 body.oc-wallpaper-active .well,
-body.oc-wallpaper-active #tab-history_customer {
-    background: rgba(255, 255, 255, var(--oc-wp-card-opacity, 0.90)) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
+body.oc-wallpaper-active #tab-history_customer,
+body.oc-wallpaper-active #speech-control-panel {
+    background: rgba(255, 255, 255, var(--oc-wp-card-opacity, 0.78)) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
     border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-    border-radius: 10px !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
     transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+body.oc-wallpaper-active .panel-heading {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7) !important;
+    color: #1e293b !important;
+}
+
+body.oc-wallpaper-active .panel-heading .panel-title {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+body.oc-wallpaper-active .panel-body {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+body.oc-wallpaper-active .panel-footer {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.7) !important;
+}
+
+/* Left Sidebar & Header */
 body.oc-wallpaper-active #column-left {
-    background: rgba(30, 41, 59, 0.92) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
+    background: rgba(15, 23, 42, 0.88) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
     border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
 }
 
 body.oc-wallpaper-active #header {
-    background: rgba(15, 23, 42, 0.94) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-body.oc-wallpaper-active .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: rgba(248, 250, 252, 0.65) !important;
+/* ==============================================================
+   TABLES & LIST GLASSMORPHISM (ALL OPENCART TABLES)
+   ============================================================== */
+body.oc-wallpaper-active .table-responsive,
+body.oc-wallpaper-active table,
+body.oc-wallpaper-active .table {
+    background: transparent !important;
+    background-color: transparent !important;
+    margin-bottom: 0 !important;
 }
 
-body.oc-wallpaper-active .table-striped > tbody > tr:nth-of-type(even) {
-    background-color: rgba(255, 255, 255, 0.65) !important;
+/* Table Headings */
+body.oc-wallpaper-active .table > thead > tr > th,
+body.oc-wallpaper-active .table > thead > tr > td,
+body.oc-wallpaper-active thead th,
+body.oc-wallpaper-active thead td {
+    background: rgba(241, 245, 249, 0.75) !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    border-top: none !important;
+    border-bottom: 2px solid rgba(203, 213, 225, 0.7) !important;
+    border-left: 1px solid rgba(226, 232, 240, 0.5) !important;
+    border-right: 1px solid rgba(226, 232, 240, 0.5) !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
-body.oc-wallpaper-active .table-hover > tbody > tr:hover {
-    background-color: rgba(241, 245, 249, 0.9) !important;
+/* Table Body Cells */
+body.oc-wallpaper-active .table > tbody > tr > td,
+body.oc-wallpaper-active .table > tbody > tr > th,
+body.oc-wallpaper-active .table > tfoot > tr > td,
+body.oc-wallpaper-active .table > tfoot > tr > th,
+body.oc-wallpaper-active tbody td,
+body.oc-wallpaper-active tbody th {
+    background-color: rgba(255, 255, 255, 0.45);
+    border-color: rgba(226, 232, 240, 0.55) !important;
+    color: #1e293b;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: background-color 0.15s ease;
+}
+
+/* Alternating subtle zebra rows */
+body.oc-wallpaper-active .table > tbody > tr:nth-of-type(odd) > td:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info),
+body.oc-wallpaper-active .table > tbody > tr:nth-of-type(odd) > th:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info) {
+    background-color: rgba(248, 250, 252, 0.38) !important;
+}
+
+body.oc-wallpaper-active .table > tbody > tr:nth-of-type(even) > td:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info),
+body.oc-wallpaper-active .table > tbody > tr:nth-of-type(even) > th:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info) {
+    background-color: rgba(255, 255, 255, 0.58) !important;
+}
+
+/* Hover effect on table rows */
+body.oc-wallpaper-active .table > tbody > tr:hover > td:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info),
+body.oc-wallpaper-active .table > tbody > tr:hover > th:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info),
+body.oc-wallpaper-active .table-hover > tbody > tr:hover > td:not([style*="background"]):not([bgcolor]):not(.success):not(.danger):not(.warning):not(.info) {
+    background-color: rgba(224, 242, 254, 0.75) !important;
+}
+
+/* Preserve custom status background colors (orange row, green, red cells) while giving them slight glass blur */
+body.oc-wallpaper-active tr[style*="background"] > td,
+body.oc-wallpaper-active td[style*="background"],
+body.oc-wallpaper-active td[bgcolor] {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Son Yorum row styling (clean & legible) */
+body.oc-wallpaper-active tr td.test,
+body.oc-wallpaper-active tr td.tst2 {
+    background-color: rgba(254, 252, 232, 0.55) !important;
+    font-size: 12.5px;
+}
+
+/* OpenCart Form Controls (Inputs, Selects, Textareas) inside glass panels */
+body.oc-wallpaper-active .form-control,
+body.oc-wallpaper-active input[type="text"],
+body.oc-wallpaper-active input[type="date"],
+body.oc-wallpaper-active select,
+body.oc-wallpaper-active textarea {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(203, 213, 225, 0.7) !important;
+    border-radius: 7px !important;
+    color: #1e293b !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease;
+}
+
+body.oc-wallpaper-active .form-control:focus,
+body.oc-wallpaper-active input[type="text"]:focus,
+body.oc-wallpaper-active select:focus,
+body.oc-wallpaper-active textarea:focus {
+    background-color: #ffffff !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Tabs */
+body.oc-wallpaper-active .nav-tabs {
+    border-bottom: 2px solid rgba(226, 232, 240, 0.6) !important;
+    margin-bottom: 15px !important;
+}
+
+body.oc-wallpaper-active .nav-tabs > li > a {
+    color: #475569 !important;
+    border-radius: 8px 8px 0 0 !important;
+    border: none !important;
+    background: transparent !important;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+body.oc-wallpaper-active .nav-tabs > li.active > a,
+body.oc-wallpaper-active .nav-tabs > li.active > a:hover,
+body.oc-wallpaper-active .nav-tabs > li.active > a:focus {
+    background: rgba(255, 255, 255, 0.85) !important;
+    color: #0284c7 !important;
+    border-bottom: 2px solid #0284c7 !important;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.oc-wallpaper-active .tab-content,
+body.oc-wallpaper-active .tab-pane {
+    background: transparent !important;
+}
+
+/* Charts / CanvasJS */
+body.oc-wallpaper-active #chartContainer {
+    background: transparent !important;
+}
+
+body.oc-wallpaper-active .canvasjs-chart-canvas {
+    border-radius: 8px;
 }
 
 /* Floating Trigger Button */
