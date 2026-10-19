@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } catch (e) {}
 
+    // Update Checker
     const btn = document.getElementById('btn-check-update');
     const msg = document.getElementById('status-msg');
 
@@ -24,6 +25,66 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.disabled = false;
                     msg.style.display = 'none';
                 }, 2500);
+            });
+        });
+    }
+
+    // Wallpaper Controls
+    const wpToggle = document.getElementById('popup-wp-toggle');
+    const btnRandomWp = document.getElementById('btn-popup-random-wp');
+    const btnBlurToggle = document.getElementById('btn-popup-blur-toggle');
+    const btnOpenGallery = document.getElementById('btn-popup-open-gallery');
+
+    // Load initial settings
+    if (chrome.storage && chrome.storage.local) {
+        chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
+            const settings = result.oc_wallpaper_settings || { enabled: true };
+            if (wpToggle) wpToggle.checked = (settings.enabled !== false);
+        });
+    }
+
+    // Toggle Wallpaper
+    if (wpToggle) {
+        wpToggle.addEventListener('change', () => {
+            const isEnabled = wpToggle.checked;
+            chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
+                const settings = result.oc_wallpaper_settings || {};
+                settings.enabled = isEnabled;
+                chrome.storage.local.set({ oc_wallpaper_settings: settings });
+            });
+        });
+    }
+
+    // Random Wallpaper
+    if (btnRandomWp) {
+        btnRandomWp.addEventListener('click', () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs && tabs[0]) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: 'set_random_wallpaper' });
+                }
+            });
+        });
+    }
+
+    // Toggle Blur
+    if (btnBlurToggle) {
+        btnBlurToggle.addEventListener('click', () => {
+            chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
+                const settings = result.oc_wallpaper_settings || {};
+                settings.wallpaperBlur = (settings.wallpaperBlur > 0) ? 0 : 8;
+                chrome.storage.local.set({ oc_wallpaper_settings: settings });
+            });
+        });
+    }
+
+    // Open Gallery Modal inside Page
+    if (btnOpenGallery) {
+        btnOpenGallery.addEventListener('click', () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs && tabs[0]) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: 'open_wallpaper_modal' });
+                    window.close(); // Close popup so user sees modal
+                }
             });
         });
     }

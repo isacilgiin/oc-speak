@@ -62,6 +62,116 @@
             display: none;
         }
 
+        .wallpaper-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+            text-align: left;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .wp-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .wp-title-row strong {
+            font-size: 12.5px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-wp-open {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-wp-open:hover {
+            opacity: 0.95;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+        }
+
+        .wp-quick-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .btn-wp-quick {
+            flex: 1;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-wp-quick:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        /* Switch */
+        .switch-wp {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 18px;
+        }
+        .switch-wp input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-wp {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 18px;
+        }
+        .slider-wp:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider-wp {
+            background-color: #3b82f6;
+        }
+        input:checked + .slider-wp:before {
+            transform: translateX(16px);
+        }
+
         .footer {
             margin-top: 15px;
             font-size: 11px;
@@ -73,9 +183,25 @@
 </head>
 <body>
     <h3>Sesli Asistan</h3>
-    <span class="version-badge" id="version-text">v1.1.0</span>
+    <span class="version-badge" id="version-text">v1.2.0</span>
     
     <p>OpenCart müşteri notları ve EczaneVPN asistanı aktif ve çalışıyor.</p>
+
+    <!-- Duvar Kağıdı Kontrolü -->
+    <div class="wallpaper-card">
+        <div class="wp-title-row">
+            <strong>🎨 HD Duvar Kağıdı</strong>
+            <label class="switch-wp">
+                <input type="checkbox" id="popup-wp-toggle" checked>
+                <span class="slider-wp"></span>
+            </label>
+        </div>
+        <div class="wp-quick-actions">
+            <button class="btn-wp-quick" id="btn-popup-random-wp">🎲 Rastgele</button>
+            <button class="btn-wp-quick" id="btn-popup-blur-toggle">🌫️ Cam Efekti</button>
+        </div>
+        <button class="btn-wp-open" id="btn-popup-open-gallery">🖼️ Galeriyi Sayfada Aç</button>
+    </div>
     
     <button class="btn-update" id="btn-check-update">🔄 Güncellemeleri Denetle</button>
     <div id="status-msg" class="status-msg">Kontrol ediliyor...</div>

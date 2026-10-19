@@ -39,6 +39,9 @@ function initSpeechExtension() {
             <button id="btn-vpn-script" class="speech-btn btn-script" title="Müşteri Sözlü Onay Metnini Aç / Oku">
                 <i class="fa fa-bullhorn"></i> <span id="btn-vpn-script-text">Sözlü Onay Metni</span>
             </button>
+            <button id="btn-panel-wallpaper" class="speech-btn btn-wallpaper-panel" title="Arka Plan Duvar Kağıdı Galerisi">
+                <i class="fa fa-picture-o"></i> <span id="btn-panel-wallpaper-text">Duvar Kağıdı</span>
+            </button>
         </div>
         <div id="speech-preview" class="speech-preview"></div>
         <div id="vpn-script-card" class="vpn-script-card" style="display: none;">
@@ -240,6 +243,15 @@ function initSpeechExtension() {
             e.preventDefault();
             const text = getEczaneVpnScriptPlainText();
             speakText(text);
+        });
+    }
+
+    // Wallpaper Button in Panel
+    const btnPanelWallpaper = controlPanel.querySelector('#btn-panel-wallpaper');
+    if (btnPanelWallpaper) {
+        btnPanelWallpaper.addEventListener('click', (e) => {
+            e.preventDefault();
+            openWallpaperModal();
         });
     }
 
@@ -719,3 +731,428 @@ function scanAndInjectNetsippButtons() {
         bodyObserver.observe(document.body, { childList: true, subtree: true });
     }
 })();
+
+// ==============================================================
+// HD WALLPAPER & GLASSMORPHISM SYSTEM (GLOBAL)
+// ==============================================================
+const WALLPAPER_PRESETS = [
+    {
+        category: 'Doğa',
+        items: [
+            { name: 'Yosemite Vadisi', url: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Sisli Çam Ormanı', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Göl & Gün Batımı', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Karlı Alpler', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=60' },
+            { name: 'İsviçre Vadisi', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Lavanta Tarlaları', url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=300&q=60' }
+        ]
+    },
+    {
+        category: 'Şehir & Gece',
+        items: [
+            { name: 'Tokyo Neon Gece', url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Manhattan Işıkları', url: 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=300&q=60' },
+            { name: 'İstanbul Boğazı', url: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Gökdelenler & Sis', url: 'https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=300&q=60' }
+        ]
+    },
+    {
+        category: 'Uzay & Gece',
+        items: [
+            { name: 'Kutup Işıkları (Aurora)', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Samanyolu & Dağlar', url: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Derin Uzay Nebulası', url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Yıldızlı Gece', url: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=300&q=60' }
+        ]
+    },
+    {
+        category: 'Minimal & Soyut',
+        items: [
+            { name: 'Karanlık Akışkan Dalgalar', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Cyberpunk Geometrik', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Pastel Gradyan', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Siyah Mermer', url: 'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=300&q=60' }
+        ]
+    },
+    {
+        category: 'Deniz & Sahil',
+        items: [
+            { name: 'Tropikal Gün Batımı', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Turkuaz Okyanus', url: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=300&q=60' },
+            { name: 'Kayalık Sahil & Sis', url: 'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=1920&q=80', thumb: 'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=300&q=60' }
+        ]
+    }
+];
+
+const DEFAULT_WALLPAPER_SETTINGS = {
+    enabled: true,
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80',
+    overlayOpacity: 0.25,
+    wallpaperBlur: 0,
+    cardOpacity: 0.90
+};
+
+let currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS };
+let activeWpCategory = 'Doğa';
+
+function getWallpaperSettings(callback) {
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        chrome.storage.local.get(['oc_wallpaper_settings'], (result) => {
+            const settings = result.oc_wallpaper_settings || DEFAULT_WALLPAPER_SETTINGS;
+            currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...settings };
+            if (callback) callback(currentWallpaperSettings);
+        });
+    } else {
+        try {
+            const local = localStorage.getItem('oc_wallpaper_settings');
+            if (local) {
+                currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...JSON.parse(local) };
+            }
+        } catch (e) {}
+        if (callback) callback(currentWallpaperSettings);
+    }
+}
+
+function saveWallpaperSettings(newSettings) {
+    currentWallpaperSettings = { ...currentWallpaperSettings, ...newSettings };
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        chrome.storage.local.set({ oc_wallpaper_settings: currentWallpaperSettings });
+    }
+    try {
+        localStorage.setItem('oc_wallpaper_settings', JSON.stringify(currentWallpaperSettings));
+    } catch (e) {}
+
+    applyWallpaper(currentWallpaperSettings);
+    updateWallpaperModalUI();
+}
+
+function applyWallpaper(settings) {
+    let bg = document.getElementById('oc-wallpaper-bg');
+    let overlay = document.getElementById('oc-wallpaper-overlay');
+
+    if (!bg) {
+        bg = document.createElement('div');
+        bg.id = 'oc-wallpaper-bg';
+        document.body.appendChild(bg);
+    }
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'oc-wallpaper-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    if (settings && settings.enabled && settings.imageUrl) {
+        document.body.classList.add('oc-wallpaper-active');
+        bg.style.backgroundImage = `url("${settings.imageUrl}")`;
+        document.documentElement.style.setProperty('--oc-wp-overlay-opacity', settings.overlayOpacity ?? 0.25);
+        document.documentElement.style.setProperty('--oc-wp-blur', (settings.wallpaperBlur ?? 0) + 'px');
+        document.documentElement.style.setProperty('--oc-wp-card-opacity', settings.cardOpacity ?? 0.90);
+    } else {
+        document.body.classList.remove('oc-wallpaper-active');
+    }
+}
+
+function setRandomWallpaper() {
+    const allItems = [];
+    WALLPAPER_PRESETS.forEach(cat => cat.items.forEach(item => allItems.push(item)));
+    if (allItems.length > 0) {
+        const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+        saveWallpaperSettings({ imageUrl: randomItem.url, enabled: true });
+    }
+}
+
+function initWallpaperSystem() {
+    if (!document.body) {
+        setTimeout(initWallpaperSystem, 200);
+        return;
+    }
+
+    getWallpaperSettings((settings) => {
+        applyWallpaper(settings);
+    });
+
+    if (!document.getElementById('btn-oc-wallpaper-trigger')) {
+        const floatBtn = document.createElement('button');
+        floatBtn.id = 'btn-oc-wallpaper-trigger';
+        floatBtn.className = 'btn-oc-wallpaper-trigger';
+        floatBtn.title = 'Arka Plan Duvar Kağıdı Galerisi';
+        floatBtn.innerHTML = '<i class="fa fa-picture-o"></i> <span>Duvar Kağıdı</span>';
+        floatBtn.onclick = (e) => {
+            e.preventDefault();
+            openWallpaperModal();
+        };
+        document.body.appendChild(floatBtn);
+    }
+
+    createWallpaperModal();
+
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+        chrome.storage.onChanged.addListener((changes, area) => {
+            if (area === 'local' && changes.oc_wallpaper_settings) {
+                currentWallpaperSettings = { ...DEFAULT_WALLPAPER_SETTINGS, ...changes.oc_wallpaper_settings.newValue };
+                applyWallpaper(currentWallpaperSettings);
+                updateWallpaperModalUI();
+            }
+        });
+    }
+
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+        chrome.runtime.onMessage.addListener((message) => {
+            if (message.action === 'open_wallpaper_modal') {
+                openWallpaperModal();
+            } else if (message.action === 'set_random_wallpaper') {
+                setRandomWallpaper();
+            }
+        });
+    }
+}
+
+function createWallpaperModal() {
+    if (document.getElementById('oc-wallpaper-modal')) return;
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'oc-wallpaper-modal-backdrop';
+    backdrop.className = 'oc-wallpaper-modal-backdrop';
+    backdrop.onclick = closeWallpaperModal;
+
+    const modal = document.createElement('div');
+    modal.id = 'oc-wallpaper-modal';
+    modal.className = 'oc-wallpaper-modal';
+
+    modal.innerHTML = `
+        <div class="oc-wp-header">
+            <h4><i class="fa fa-picture-o"></i> HD Duvar Kağıdı Galerisi</h4>
+            <div class="oc-wp-header-controls">
+                <div class="oc-wp-toggle-wrapper">
+                    <span>Arka Plan:</span>
+                    <label class="switch-wp" style="margin: 0 4px;">
+                        <input type="checkbox" id="oc-wp-modal-toggle">
+                        <span class="slider-wp"></span>
+                    </label>
+                </div>
+                <button class="oc-wp-close-btn" id="oc-wp-modal-close" title="Kapat">&times;</button>
+            </div>
+        </div>
+
+        <div class="oc-wp-body">
+            <div class="oc-wp-tabs" id="oc-wp-tabs"></div>
+
+            <div class="oc-wp-action-bar">
+                <button class="oc-wp-random-btn" id="oc-wp-random-btn">
+                    <i class="fa fa-random"></i> 🎲 Rastgele Manzara
+                </button>
+                <div class="oc-wp-custom-inputs">
+                    <input type="text" class="oc-wp-url-input" id="oc-wp-url-input" placeholder="Resim URL'si (https://...)">
+                    <button class="oc-wp-btn-sm" id="oc-wp-url-apply">Uygula</button>
+                    <label class="oc-wp-upload-label" title="Bilgisayardan Resim Yükle">
+                        <i class="fa fa-upload"></i> Yükle
+                        <input type="file" id="oc-wp-file-input" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+            </div>
+
+            <div class="oc-wp-grid" id="oc-wp-grid"></div>
+
+            <div class="oc-wp-sliders-panel">
+                <div class="oc-wp-slider-group">
+                    <div class="oc-wp-slider-header">
+                        <span>🌗 Karartma / Şeffaflık</span>
+                        <span id="oc-val-overlay">25%</span>
+                    </div>
+                    <input type="range" class="oc-wp-slider" id="oc-slider-overlay" min="0" max="0.80" step="0.05" value="0.25">
+                </div>
+                <div class="oc-wp-slider-group">
+                    <div class="oc-wp-slider-header">
+                        <span>🌫️ Arka Plan Bulanıklığı</span>
+                        <span id="oc-val-blur">0px</span>
+                    </div>
+                    <input type="range" class="oc-wp-slider" id="oc-slider-blur" min="0" max="20" step="1" value="0">
+                </div>
+                <div class="oc-wp-slider-group">
+                    <div class="oc-wp-slider-header">
+                        <span>🪟 Panel Saydamlığı</span>
+                        <span id="oc-val-card">90%</span>
+                    </div>
+                    <input type="range" class="oc-wp-slider" id="oc-slider-card" min="0.70" max="1.0" step="0.02" value="0.90">
+                </div>
+            </div>
+        </div>
+
+        <div class="oc-wp-footer">
+            <button class="oc-wp-reset-btn" id="oc-wp-reset-btn"><i class="fa fa-undo"></i> Varsayılana Dön</button>
+            <span class="oc-wp-status-text" id="oc-wp-status-text">✓ Değişiklikler anında kaydedilir</span>
+        </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(modal);
+
+    document.getElementById('oc-wp-modal-close').onclick = closeWallpaperModal;
+
+    const modalToggle = document.getElementById('oc-wp-modal-toggle');
+    modalToggle.onchange = () => {
+        saveWallpaperSettings({ enabled: modalToggle.checked });
+    };
+
+    document.getElementById('oc-wp-random-btn').onclick = () => {
+        setRandomWallpaper();
+    };
+
+    const urlInput = document.getElementById('oc-wp-url-input');
+    const urlApplyBtn = document.getElementById('oc-wp-url-apply');
+    const applyCustomUrl = () => {
+        const val = urlInput.value.trim();
+        if (val && (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'))) {
+            saveWallpaperSettings({ imageUrl: val, enabled: true });
+            urlInput.value = '';
+        } else {
+            alert('Lütfen geçerli bir resim linki (URL) girin.');
+        }
+    };
+    urlApplyBtn.onclick = applyCustomUrl;
+    urlInput.onkeydown = (e) => { if (e.key === 'Enter') applyCustomUrl(); };
+
+    const fileInput = document.getElementById('oc-wp-file-input');
+    fileInput.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64Url = event.target.result;
+                saveWallpaperSettings({ imageUrl: base64Url, enabled: true });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const sliderOverlay = document.getElementById('oc-slider-overlay');
+    const valOverlay = document.getElementById('oc-val-overlay');
+    sliderOverlay.oninput = () => {
+        const val = parseFloat(sliderOverlay.value);
+        valOverlay.textContent = Math.round(val * 100) + '%';
+        saveWallpaperSettings({ overlayOpacity: val });
+    };
+
+    const sliderBlur = document.getElementById('oc-slider-blur');
+    const valBlur = document.getElementById('oc-val-blur');
+    sliderBlur.oninput = () => {
+        const val = parseInt(sliderBlur.value, 10);
+        valBlur.textContent = val + 'px';
+        saveWallpaperSettings({ wallpaperBlur: val });
+    };
+
+    const sliderCard = document.getElementById('oc-slider-card');
+    const valCard = document.getElementById('oc-val-card');
+    sliderCard.oninput = () => {
+        const val = parseFloat(sliderCard.value);
+        valCard.textContent = Math.round(val * 100) + '%';
+        saveWallpaperSettings({ cardOpacity: val });
+    };
+
+    document.getElementById('oc-wp-reset-btn').onclick = () => {
+        saveWallpaperSettings(DEFAULT_WALLPAPER_SETTINGS);
+    };
+
+    renderCategoryTabs();
+    renderWallpaperGrid(activeWpCategory);
+}
+
+function renderCategoryTabs() {
+    const tabsContainer = document.getElementById('oc-wp-tabs');
+    if (!tabsContainer) return;
+    tabsContainer.innerHTML = '';
+
+    WALLPAPER_PRESETS.forEach(cat => {
+        const tabBtn = document.createElement('button');
+        tabBtn.className = 'oc-wp-tab-btn' + (cat.category === activeWpCategory ? ' active' : '');
+        tabBtn.textContent = cat.category;
+        tabBtn.onclick = () => {
+            activeWpCategory = cat.category;
+            renderCategoryTabs();
+            renderWallpaperGrid(activeWpCategory);
+        };
+        tabsContainer.appendChild(tabBtn);
+    });
+}
+
+function renderWallpaperGrid(category) {
+    const grid = document.getElementById('oc-wp-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const catObj = WALLPAPER_PRESETS.find(c => c.category === category);
+    if (!catObj) return;
+
+    catObj.items.forEach(item => {
+        const card = document.createElement('div');
+        const isActive = (currentWallpaperSettings.imageUrl === item.url);
+        card.className = 'oc-wp-card' + (isActive ? ' is-active' : '');
+        card.innerHTML = `
+            <img src="${item.thumb}" alt="${item.name}" loading="lazy">
+            <div class="oc-wp-card-title">${item.name}</div>
+            <div class="oc-wp-card-check"><i class="fa fa-check"></i></div>
+        `;
+        card.onclick = () => {
+            saveWallpaperSettings({ imageUrl: item.url, enabled: true });
+        };
+        grid.appendChild(card);
+    });
+}
+
+function updateWallpaperModalUI() {
+    const modalToggle = document.getElementById('oc-wp-modal-toggle');
+    if (modalToggle) modalToggle.checked = (currentWallpaperSettings.enabled !== false);
+
+    const sliderOverlay = document.getElementById('oc-slider-overlay');
+    const valOverlay = document.getElementById('oc-val-overlay');
+    if (sliderOverlay && valOverlay) {
+        sliderOverlay.value = currentWallpaperSettings.overlayOpacity ?? 0.25;
+        valOverlay.textContent = Math.round((currentWallpaperSettings.overlayOpacity ?? 0.25) * 100) + '%';
+    }
+
+    const sliderBlur = document.getElementById('oc-slider-blur');
+    const valBlur = document.getElementById('oc-val-blur');
+    if (sliderBlur && valBlur) {
+        sliderBlur.value = currentWallpaperSettings.wallpaperBlur ?? 0;
+        valBlur.textContent = (currentWallpaperSettings.wallpaperBlur ?? 0) + 'px';
+    }
+
+    const sliderCard = document.getElementById('oc-slider-card');
+    const valCard = document.getElementById('oc-val-card');
+    if (sliderCard && valCard) {
+        sliderCard.value = currentWallpaperSettings.cardOpacity ?? 0.90;
+        valCard.textContent = Math.round((currentWallpaperSettings.cardOpacity ?? 0.90) * 100) + '%';
+    }
+
+    renderWallpaperGrid(activeWpCategory);
+}
+
+function openWallpaperModal() {
+    createWallpaperModal();
+    updateWallpaperModalUI();
+    const backdrop = document.getElementById('oc-wallpaper-modal-backdrop');
+    const modal = document.getElementById('oc-wallpaper-modal');
+    if (backdrop && modal) {
+        backdrop.classList.add('is-open');
+        modal.classList.add('is-open');
+    }
+}
+
+function closeWallpaperModal() {
+    const backdrop = document.getElementById('oc-wallpaper-modal-backdrop');
+    const modal = document.getElementById('oc-wallpaper-modal');
+    if (backdrop && modal) {
+        backdrop.classList.remove('is-open');
+        modal.classList.remove('is-open');
+    }
+}
+
+// Global initialization of Wallpaper System
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWallpaperSystem);
+    } else {
+        initWallpaperSystem();
+    }
+})();
+

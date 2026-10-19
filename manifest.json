@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Opencart Sesli Not Asistanı",
-  "version": "1.1.1",
-  "description": "Opencart müşteri notları için konuşmayı metne çevirir ve metni okur.",
+  "version": "1.2.0",
+  "description": "Opencart müşteri notları, EczaneVPN asistanı ve HD Arka Plan Galerisi.",
   "permissions": [
     "activeTab",
     "scripting",
     "clipboardRead",
-    "alarms"
+    "alarms",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"

@@ -352,3 +352,541 @@ input:checked+.slider:before {
 .speech-btn i {
     font-style: normal;
 }
+
+/* ==============================================================
+   HD WALLPAPER & GLASSMORPHISM SYSTEM
+   ============================================================== */
+
+:root {
+    --oc-wp-overlay-opacity: 0.25;
+    --oc-wp-blur: 0px;
+    --oc-wp-card-opacity: 0.90;
+}
+
+#oc-wallpaper-bg {
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    width: calc(100vw + 40px);
+    height: calc(100vh + 40px);
+    z-index: -99999;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    display: none;
+    filter: blur(var(--oc-wp-blur, 0px));
+    transform: scale(1.02);
+    transition: background-image 0.5s ease-in-out, filter 0.3s ease;
+}
+
+#oc-wallpaper-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -99998;
+    pointer-events: none;
+    display: none;
+    background-color: rgba(0, 0, 0, var(--oc-wp-overlay-opacity, 0.25));
+    transition: background-color 0.3s ease;
+}
+
+body.oc-wallpaper-active #oc-wallpaper-bg,
+body.oc-wallpaper-active #oc-wallpaper-overlay {
+    display: block !important;
+}
+
+body.oc-wallpaper-active {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Glassmorphism on OpenCart Containers */
+body.oc-wallpaper-active #content,
+body.oc-wallpaper-active .panel,
+body.oc-wallpaper-active .panel-default,
+body.oc-wallpaper-active .customer-panel,
+body.oc-wallpaper-active .well,
+body.oc-wallpaper-active #tab-history_customer {
+    background: rgba(255, 255, 255, var(--oc-wp-card-opacity, 0.90)) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    border-radius: 10px !important;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+body.oc-wallpaper-active #column-left {
+    background: rgba(30, 41, 59, 0.92) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.oc-wallpaper-active #header {
+    background: rgba(15, 23, 42, 0.94) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.oc-wallpaper-active .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(248, 250, 252, 0.65) !important;
+}
+
+body.oc-wallpaper-active .table-striped > tbody > tr:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.oc-wallpaper-active .table-hover > tbody > tr:hover {
+    background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+/* Floating Trigger Button */
+.btn-oc-wallpaper-trigger {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 99990;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #6366f1 100%);
+    color: #ffffff !important;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.45);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    outline: none;
+}
+
+.btn-oc-wallpaper-trigger:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 28px rgba(59, 130, 246, 0.6);
+}
+
+.btn-oc-wallpaper-trigger i {
+    font-size: 15px;
+}
+
+/* Button inside speech assistant control panel */
+.btn-wallpaper-panel {
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+.btn-wallpaper-panel:hover {
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+    transform: translateY(-1px);
+}
+
+/* ==============================================================
+   WALLPAPER MODAL / DRAWER
+   ============================================================== */
+.oc-wallpaper-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 99995;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.oc-wallpaper-modal-backdrop.is-open {
+    display: block;
+    opacity: 1;
+}
+
+.oc-wallpaper-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 90%;
+    max-width: 820px;
+    max-height: 88vh;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    z-index: 99996;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    color: #1e293b;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.oc-wallpaper-modal.is-open {
+    display: flex;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Modal Header */
+.oc-wp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+}
+
+.oc-wp-header h4 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.2px;
+}
+
+.oc-wp-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.oc-wp-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.oc-wp-close-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.oc-wp-close-btn:hover {
+    background: rgba(239, 68, 68, 0.9);
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.oc-wp-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    max-height: calc(88vh - 140px);
+}
+
+/* Tabs */
+.oc-wp-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+    overflow-x: auto;
+}
+
+.oc-wp-tab-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.oc-wp-tab-btn:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.oc-wp-tab-btn.active {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+/* Action Bar inside Body */
+.oc-wp-action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.oc-wp-random-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+}
+
+.oc-wp-random-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.oc-wp-custom-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 280px;
+    justify-content: flex-end;
+}
+
+.oc-wp-url-input {
+    flex: 1;
+    max-width: 320px;
+    padding: 7px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.oc-wp-url-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.oc-wp-btn-sm {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.oc-wp-btn-sm:hover {
+    background: #2563eb;
+}
+
+.oc-wp-upload-label {
+    background: #e2e8f0;
+    color: #334155;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    margin: 0;
+}
+
+.oc-wp-upload-label:hover {
+    background: #cbd5e1;
+}
+
+/* Wallpapers Grid */
+.oc-wp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.oc-wp-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 16 / 10;
+    background: #f1f5f9;
+    border: 3px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.oc-wp-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+}
+
+.oc-wp-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.oc-wp-card:hover img {
+    transform: scale(1.08);
+}
+
+.oc-wp-card.is-active {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35), 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.oc-wp-card-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oc-wp-card-check {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #3b82f6;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.oc-wp-card.is-active .oc-wp-card-check {
+    display: flex;
+}
+
+/* Adjustments & Sliders Panel */
+.oc-wp-sliders-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.oc-wp-slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.oc-wp-slider-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.oc-wp-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 5px;
+    background: #cbd5e1;
+    outline: none;
+    transition: background 0.2s;
+}
+
+.oc-wp-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+    transition: transform 0.15s ease;
+}
+
+.oc-wp-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Modal Footer */
+.oc-wp-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.oc-wp-reset-btn {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.oc-wp-reset-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.oc-wp-status-text {
+    font-size: 12px;
+    color: #10b981;
+    font-weight: 600;
+}
