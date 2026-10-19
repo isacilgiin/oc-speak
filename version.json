@@ -1,5 +1,5 @@
 {
   "version": "1.2.1",
   "name": "Opencart Sesli Not Asistanı",
-  "changelog": "Tablolar, paneller ve filtre alanları için tam cam efekti (glassmorphism) ve arkaplan saydamlık düzeltmesi."
+  "changelog": "Tablolar, paneller ve listeler için şeffaf cam efekti (glassmorphism) ve arkaplan görünürlüğü iyileştirildi."
 }
