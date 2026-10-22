@@ -760,8 +760,77 @@ function scanAndInjectNetsippButtons() {
 })();
 
 // ==============================================================
-// KULLANICI VERSİYON DEĞİŞTİRME DROPDOWN OVERRIDE SİSTEMİ
+// KULLANICI VERSİYON DEĞİŞTİRME DROPDOWN & ESKİ VERSİYONLAR MODAL SİSTEMİ
 // ==============================================================
+const ALL_KNOWN_VERSIONS = [
+    // Öne Çıkanlar (Featured - Fix)
+    { id: '90.0.0.0', short: '90', name: '90', category: 'featured', tag: 'Öne Çıkan' },
+    { id: '93.0.0.0', short: '93', name: '93 (New)', category: 'featured', tag: 'Öne Çıkan', isNew: true },
+    { id: '99.0.0.0', short: '99', name: '99', category: 'featured', tag: 'Öne Çıkan' },
+    { id: '100.0.0.0', short: '100', name: '100', category: 'featured', tag: 'Öne Çıkan' },
+    { id: '101.0.0.0', short: '101', name: '101', category: 'featured', tag: 'Öne Çıkan' },
+
+    // 90 & 70 Serisi
+    { id: '97.0.0.0', short: '97.3', name: '97.3', category: 'series90', tag: '90 Serisi' },
+    { id: '96.0.0.0', short: '96', name: '96', category: 'series90', tag: '90 Serisi' },
+    { id: '95.0.0.0', short: '95', name: '95', category: 'series90', tag: '90 Serisi' },
+    { id: '76.0.0.0', short: '76', name: '76', category: 'series90', tag: '70 Serisi' },
+    { id: '68.0.0.0', short: '68', name: '68. Versiyon', category: 'series90', tag: '60 Serisi' },
+
+    // Medoxy Serisi
+    { id: '7.36.0.0', name: 'Medoxy 36.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.35.0.0', name: 'Medoxy 35.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.34.0.0', name: 'Medoxy 34.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.32.0.0', name: 'Medoxy 32.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.30.0.0', name: 'Medoxy 30.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.29.0.0', name: 'Medoxy 29.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.27.0.0', name: 'Medoxy 27.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.25.0.0', name: 'Medoxy 25.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.24.0.0', name: 'Medoxy 24.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.23.0.0', name: 'Medoxy 23.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '7.22.0.0', name: 'Medoxy 22.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71017', name: 'Medoxy 17.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71016', name: 'Medoxy 16.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71014', name: 'Medoxy 14.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71013', name: 'Medoxy 13.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71012', name: 'Medoxy 12.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71011', name: 'Medoxy 11.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71010', name: 'Medoxy 10.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71009', name: 'Medoxy 9.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71008', name: 'Medoxy 8.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71007', name: 'Medoxy 7.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71006', name: 'Medoxy 6.0', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71005-2', name: 'Medoxy 5.0 (Server2)', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71005', name: 'Medoxy 5.0 (Server1)', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71004-2', name: 'Medoxy 4.0 (Server2)', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71004', name: 'Medoxy 4.0 (Server1)', category: 'medoxy', tag: 'Medoxy' },
+    { id: '71001', name: 'Medoxy 1.0', category: 'medoxy', tag: 'Medoxy' },
+
+    // Savar & Eczanem Serisi
+    { id: '7.37.4.0', name: 'Savar 37 V4', category: 'savar', tag: 'Savar' },
+    { id: '7.37.3.0', name: 'Savar 37 V3', category: 'savar', tag: 'Savar' },
+    { id: '39.0.1.0', name: 'Eczanem 39', category: 'savar', tag: 'Eczanem' },
+    { id: '39.0.0.0', name: 'Normal 39', category: 'savar', tag: 'Klasik' },
+    { id: '40.0.0.0', name: 'Normal 40', category: 'savar', tag: 'Klasik' },
+
+    // Proxy Serisi
+    { id: '49.0.0.0', name: 'Proxy 49', category: 'proxy', tag: 'Proxy' },
+    { id: '48.0.0.0', name: 'Proxy 48 (NET4.5)', category: 'proxy', tag: 'Proxy' },
+    { id: '44.0.0.0', name: 'Proxy 44 (NET4.5)', category: 'proxy', tag: 'Proxy' },
+    { id: '43.0.0.0', name: 'Proxy 43', category: 'proxy', tag: 'Proxy' },
+    { id: '42.0.0.0', name: 'Proxy 42', category: 'proxy', tag: 'Proxy' },
+    { id: '41.0.0.0', name: 'Proxy 41', category: 'proxy', tag: 'Proxy' },
+
+    // Arşiv & Özel
+    { id: '7900', name: '7900 (Latest)', category: 'archive', tag: 'Klasik' },
+    { id: '7800', name: '7800', category: 'archive', tag: 'Klasik' },
+    { id: '7700', name: '7700', category: 'archive', tag: 'Klasik' },
+    { id: '6400', name: '6400 (API)', category: 'archive', tag: 'Özel' },
+    { id: '3022', name: '3022 - Stable', category: 'archive', tag: 'Stabil' },
+    { id: '2620', name: '2620', category: 'archive', tag: 'Klasik' },
+    { id: '2150', name: 'Taş Devri (2150)', category: 'archive', tag: 'Nostalji' }
+];
+
 function overrideVersionDropdown() {
     // Sayfadaki 'versiyondegistir' linklerini bul
     const links = document.querySelectorAll('a[href*="versiyondegistir"]');
@@ -785,6 +854,32 @@ function overrideVersionDropdown() {
     if (!targetMenu) return;
     if (targetMenu.getAttribute('data-oc-version-override') === 'true') return;
 
+    // Sayfadaki orijinal versiyon linklerini tara ve bilinmeyenleri dinamik ekle
+    const originalLinks = targetMenu.querySelectorAll('a[href*="versiyondegistir"]');
+    originalLinks.forEach(link => {
+        const href = link.getAttribute('href') || link.href;
+        if (!href) return;
+        const parts = href.split('/');
+        const param = parts[parts.length - 1];
+        let label = (link.textContent || '').trim();
+        // Gereksiz veya uyarı kelimelerini temizle
+        label = label.replace(/\(\s*kullanma\s*\)/gi, '')
+                     .replace(/\bkullanma\b/gi, '')
+                     .replace(/\(\s*bunu kullanmayın\s*\)/gi, '')
+                     .trim();
+        if (!label) label = param;
+
+        const exists = ALL_KNOWN_VERSIONS.some(v => v.id === param);
+        if (!exists && param) {
+            ALL_KNOWN_VERSIONS.push({
+                id: param,
+                name: label,
+                category: 'archive',
+                tag: 'Arşiv'
+            });
+        }
+    });
+
     // Örnek URL: http://ilactarif.com.tr/versiyondegistir/kullanici@mail.com/TOKEN/ORDERID/ADMIN/99.0.0.0
     // Sondaki sürüm numarasını atarak temel URL'i çıkarıyoruz
     const parts = sampleHref.split('/');
@@ -800,33 +895,237 @@ function overrideVersionDropdown() {
         if (m) currentVer = m[1];
     }
 
-    // İstenen versiyon listesi: 90, 93 ( New), 99, 100 ( kullanma), 101
-    const allowedVersions = [
-        { ver: '90.0.0.0', short: '90', label: ' 90 ' },
-        { ver: '93.0.0.0', short: '93', label: ' 93 ( New) ' },
-        { ver: '99.0.0.0', short: '99', label: ' 99 ' },
-        { ver: '100.0.0.0', short: '100', label: ' 100 ( kullanma) ', isWarning: true },
-        { ver: '101.0.0.0', short: '101', label: ' 101 ' }
-    ];
+    // Dropdown için Fix / Öne Çıkan 5 Versiyon
+    const featuredVersions = ALL_KNOWN_VERSIONS.filter(v => v.category === 'featured');
 
-    let newHtml = '';
-    allowedVersions.forEach(item => {
-        const isCurrent = currentVer && (currentVer === item.ver || currentVer.startsWith(item.short + '.'));
+    let dropdownHtml = `
+        <li class="oc-ver-dropdown-header">
+            <span><i class="fa fa-star"></i> Öne Çıkan Sürümler</span>
+            <span class="oc-ver-count">${featuredVersions.length} Sürüm</span>
+        </li>
+    `;
+
+    featuredVersions.forEach(item => {
+        const isCurrent = currentVer && (currentVer === item.id || currentVer.startsWith(item.short + '.'));
         const activeBadge = isCurrent 
-            ? ' <span class="badge" style="background:#10b981; font-size:10px; margin-left:6px; vertical-align:middle;">Mevcut ✓</span>' 
+            ? '<span class="oc-ver-tag-current"><i class="fa fa-check"></i> Aktif</span>' 
             : '';
-        const warningStyle = item.isWarning 
-            ? 'color:#ef4444; font-weight:600;' 
-            : '';
-        const confirmAttr = item.isWarning 
-            ? 'onclick="return confirm(\'Dikkat: 100 sürümü (kullanma) olarak belirtilmiştir. Yine de bu sürüme geçmek istiyor musunuz?\');"' 
+        const newBadge = item.isNew 
+            ? '<span class="oc-ver-tag-new">New</span>' 
             : '';
 
-        newHtml += `<li><a href="${baseUrl}/${item.ver}" ${confirmAttr} style="${warningStyle}">${item.label}${activeBadge}</a></li>\n`;
+        dropdownHtml += `
+            <li>
+                <a href="${baseUrl}/${item.id}" class="oc-ver-item">
+                    <span class="oc-ver-num-wrap">
+                        <span class="oc-ver-icon">${item.short}</span>
+                        <span>${item.name}</span>
+                    </span>
+                    <span>${newBadge} ${activeBadge}</span>
+                </a>
+            </li>
+        `;
     });
 
-    targetMenu.innerHTML = newHtml;
+    dropdownHtml += `
+        <li class="divider" style="margin: 8px 0;"></li>
+        <li class="oc-ver-dropdown-footer">
+            <button type="button" class="oc-btn-show-old-versions" id="oc-btn-open-old-versions">
+                <i class="fa fa-history"></i> Eski Versiyonları Görüntüle...
+            </button>
+        </li>
+    `;
+
+    targetMenu.innerHTML = dropdownHtml;
+    targetMenu.classList.add('oc-version-override-menu');
     targetMenu.setAttribute('data-oc-version-override', 'true');
+
+    // Eski Versiyonları Görüntüle Butonuna Tıklama Olayı
+    const btnOld = targetMenu.querySelector('#oc-btn-open-old-versions');
+    if (btnOld) {
+        btnOld.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Bootstrap dropdown'ını kapat
+            const dropdownToggle = targetMenu.closest('.dropdown')?.querySelector('.dropdown-toggle');
+            if (dropdownToggle && window.$) {
+                try {
+                    $(dropdownToggle).dropdown('toggle');
+                } catch (err) {}
+            }
+
+            openOldVersionsModal(baseUrl, currentVer);
+        });
+    }
+}
+
+// ==============================================================
+// ESKİ VERSİYONLARI GÖRÜNTÜLE & UYGULA MODAL PENCERESİ
+// ==============================================================
+function openOldVersionsModal(baseUrl, currentVer) {
+    const existing = document.getElementById('oc-old-versions-backdrop');
+    if (existing) {
+        existing.remove();
+    }
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'oc-old-versions-backdrop';
+    backdrop.className = 'oc-old-ver-backdrop';
+
+    const categories = [
+        { id: 'all', name: `Tümü (${ALL_KNOWN_VERSIONS.length})` },
+        { id: 'featured', name: 'Öne Çıkanlar' },
+        { id: 'series90', name: '90 & 70 Serisi' },
+        { id: 'medoxy', name: 'Medoxy' },
+        { id: 'savar', name: 'Savar & Eczanem' },
+        { id: 'proxy', name: 'Proxy Serisi' },
+        { id: 'archive', name: 'Klasik & Arşiv' }
+    ];
+
+    backdrop.innerHTML = `
+        <div class="oc-old-ver-modal">
+            <div class="oc-old-ver-header">
+                <div class="oc-old-ver-header-left">
+                    <div class="oc-old-ver-icon-badge">
+                        <i class="fa fa-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="oc-old-ver-title">Versiyon Yöneticisi & Tüm Sürümler</h3>
+                        <p class="oc-old-ver-subtitle">Öne çıkan veya geçmiş arşiv sürümlerinden birini seçerek müşteriye uygulayabilirsiniz.</p>
+                    </div>
+                </div>
+                <button type="button" class="oc-old-ver-close-btn" id="oc-old-ver-close" title="Kapat">&times;</button>
+            </div>
+
+            <div class="oc-old-ver-toolbar">
+                <div class="oc-old-ver-search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="oc-old-ver-search-input" class="oc-old-ver-search-input" placeholder="Sürüm no veya isim ara (örn: 95, 76, Medoxy, Proxy, Savar, Taş Devri)...">
+                </div>
+                <div class="oc-old-ver-categories" id="oc-old-ver-cats">
+                    ${categories.map((c, i) => `
+                        <button type="button" class="oc-old-ver-cat-btn ${i === 0 ? 'active' : ''}" data-cat="${c.id}">${c.name}</button>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="oc-old-ver-body">
+                <div class="oc-old-ver-grid" id="oc-old-ver-grid"></div>
+            </div>
+
+            <div class="oc-old-ver-footer">
+                <div class="oc-old-ver-footer-info">
+                    Mevcut Aktif Sürüm: <strong>${currentVer || 'Belirtilmedi'}</strong> &bull; Toplam <strong>${ALL_KNOWN_VERSIONS.length}</strong> sürüm listelendi.
+                </div>
+                <button type="button" class="oc-old-ver-footer-close" id="oc-old-ver-footer-close">Pencereyi Kapat</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    let activeCat = 'all';
+    let searchQuery = '';
+
+    const grid = backdrop.querySelector('#oc-old-ver-grid');
+    const searchInput = backdrop.querySelector('#oc-old-ver-search-input');
+    const catButtons = backdrop.querySelectorAll('.oc-old-ver-cat-btn');
+
+    function renderCards() {
+        const filtered = ALL_KNOWN_VERSIONS.filter(item => {
+            const matchesCat = (activeCat === 'all') || (item.category === activeCat);
+            const textToSearch = `${item.name} ${item.id} ${item.tag}`.toLowerCase();
+            const matchesSearch = !searchQuery || textToSearch.includes(searchQuery.toLowerCase());
+            return matchesCat && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="oc-old-ver-empty">
+                    <i class="fa fa-search"></i>
+                    <div>Aradığınız kriterlere uygun sürüm bulunamadı.</div>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(item => {
+            const isCurrent = currentVer && (currentVer === item.id || currentVer.startsWith(item.id.replace('.0.0.0', '')));
+            return `
+                <div class="oc-old-ver-card ${isCurrent ? 'is-current' : ''}">
+                    <div class="oc-old-ver-card-info">
+                        <div class="oc-old-ver-card-name">${item.name}</div>
+                        <div class="oc-old-ver-card-param">${item.id}</div>
+                        <span class="oc-old-ver-card-tag">${isCurrent ? '✓ Mevcut Sürüm' : item.tag}</span>
+                    </div>
+                    <div>
+                        <button type="button" class="oc-old-ver-apply-btn" data-url="${baseUrl}/${item.id}">
+                            <i class="fa fa-check-circle"></i> Uygula
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Uygula Butonları
+        grid.querySelectorAll('.oc-old-ver-apply-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const url = btn.getAttribute('data-url');
+                if (url) {
+                    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Geçiliyor...';
+                    btn.style.opacity = '0.8';
+                    window.location.href = url;
+                }
+            });
+        });
+    }
+
+    renderCards();
+
+    // Arama Girişi
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderCards();
+    });
+
+    // Kategori Seçimleri
+    catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            catButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeCat = btn.getAttribute('data-cat');
+            renderCards();
+        });
+    });
+
+    // Kapatma İşlemleri
+    function closeModal() {
+        backdrop.style.opacity = '0';
+        backdrop.style.transition = 'opacity 0.15s ease';
+        setTimeout(() => backdrop.remove(), 150);
+    }
+
+    backdrop.querySelector('#oc-old-ver-close').addEventListener('click', closeModal);
+    backdrop.querySelector('#oc-old-ver-footer-close').addEventListener('click', closeModal);
+
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape' && document.getElementById('oc-old-versions-backdrop')) {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    });
+
+    // Otomatik Arama Kutusuna Odaklan
+    setTimeout(() => {
+        searchInput.focus();
+    }, 100);
 }
 
 // Global Observer to handle page loads and dynamic content for version dropdown
