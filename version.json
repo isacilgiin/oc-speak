@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "name": "Opencart Sesli Not Asistanı",
-  "changelog": "Kullanıcının Versiyonunu Değiştir menüsü optimize edildi (90, 93 New, 99, 100 kullanma, 101 eklendi)."
+  "changelog": "Opera ve Chromium tarayıcı uyumluluğu sağlandı (Web Speech API koruması eklendi)."
 }

@@ -1,9 +1,5 @@
-// Check if SpeechRecognition is supported
-if (!('webkitSpeechRecognition' in window)) {
-    console.error("Web Speech API bu tarayıcıda desteklenmiyor.");
-} else {
-    initSpeechExtension();
-}
+// Always initialize extension components (Compatible with Chrome, Opera, Edge, Brave)
+initSpeechExtension();
 
 function initSpeechExtension() {
     // Locate the target textarea
@@ -65,11 +61,24 @@ function initSpeechExtension() {
     targetArea.style.marginTop = '15px';
 
 
-    // Speech Recognition Setup
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'tr-TR';
+    // Speech Recognition Setup (Opera / Chrome / Edge uyumlu)
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isSpeechSupported = false;
+
+    if (SpeechRecognitionAPI) {
+        try {
+            recognition = new SpeechRecognitionAPI();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'tr-TR';
+            isSpeechSupported = true;
+        } catch (e) {
+            console.warn("SpeechRecognition nesnesi oluşturulamadı:", e);
+        }
+    } else {
+        console.warn("Web Speech API bu tarayıcıda (Opera) bulunmuyor. EczaneVPN, Sözlü Onay, Metin Okuma ve Duvar Kağıdı özellikleri aktiftir.");
+    }
 
     let isRecording = false;
     let mode = 'continuous'; // 'continuous' or 'ptt' (push-to-talk)
@@ -90,8 +99,15 @@ function initSpeechExtension() {
     const modeToggle = controlPanel.querySelector('#mode-toggle');
     const previewArea = controlPanel.querySelector('#speech-preview');
 
+    if (!isSpeechSupported) {
+        statusBadge.textContent = "Opera: Ses Kapalı";
+        statusBadge.title = "Opera tarayıcısında mikrofonla sesli yazma desteklenmez (Google Chrome önerilir). Diğer tüm asistan özellikleri aktiftir.";
+        btnRecord.title = "Opera'da mikrofonla sesli yazma desteklenmez (Chrome önerilir).";
+    }
+
     // Update UI based on mode
     function updateModeUI() {
+        if (!isSpeechSupported) return;
         if (modeToggle.checked) {
             mode = 'ptt';
             btnRecordText.textContent = "Basılı Tut";
@@ -109,6 +125,10 @@ function initSpeechExtension() {
 
     // Recording Functions
     function startRecording() {
+        if (!isSpeechSupported || !recognition) {
+            alert("Bilgilendirme:\n\nOpera tarayıcısında mikrofonla sesli yazma (Google Web Speech API) motoru yer almamaktadır.\n\nMikrofona konuşarak yazdırmak için Google Chrome kullanabilirsiniz.\n\nEczaneVPN Onay Notu, Sözlü Onay Metni, Metin Okuma (Sesli Dinleme), Duvar Kağıdı ve Versiyon Değiştirme gibi diğer TÜM özellikler Opera'da tam olarak aktiftir ve sorunsuz çalışır.");
+            return;
+        }
         if (!isRecording) {
             try {
                 recognition.start();
@@ -119,16 +139,14 @@ function initSpeechExtension() {
     }
 
     function stopRecording() {
-        if (isRecording) {
+        if (recognition && isRecording) {
             recognition.stop();
         }
     }
 
     // Button Logic
-    // Mouse Down (PTT Start) or Click (Continuous Toggle) behavior is complex to mix, 
-    // so we separate them based on mode.
-
     btnRecord.addEventListener('mousedown', (e) => {
+        if (!isSpeechSupported) return;
         if (mode === 'ptt') {
             e.preventDefault();
             startRecording();
@@ -136,6 +154,7 @@ function initSpeechExtension() {
     });
 
     btnRecord.addEventListener('mouseup', (e) => {
+        if (!isSpeechSupported) return;
         if (mode === 'ptt') {
             e.preventDefault();
             setTimeout(stopRecording, 500); // Small delay to catch end of sentence
@@ -150,6 +169,10 @@ function initSpeechExtension() {
 
     btnRecord.addEventListener('click', (e) => {
         e.preventDefault();
+        if (!isSpeechSupported || !recognition) {
+            startRecording();
+            return;
+        }
         if (mode === 'continuous') {
             if (isRecording) {
                 stopRecording();
@@ -261,24 +284,26 @@ function initSpeechExtension() {
     }
 
     // Recognition Lifecycle
-    recognition.onstart = () => {
-        isRecording = true;
-        statusBadge.textContent = "Dinliyor...";
-        statusBadge.className = "status-badge status-listening";
-        controlPanel.classList.add('recording-active');
-        previewArea.style.display = 'block';
-        previewArea.textContent = '...';
+    if (recognition) {
+        recognition.onstart = () => {
+            isRecording = true;
+            statusBadge.textContent = "Dinliyor...";
+            statusBadge.className = "status-badge status-listening";
+            controlPanel.classList.add('recording-active');
+            previewArea.style.display = 'block';
+            previewArea.textContent = '...';
 
-        // Audio Feedback
-        playBeep();
+            // Audio Feedback
+            playBeep();
 
-        if (mode === 'continuous') {
-            btnRecord.innerHTML = '<i class="fa fa-stop"></i> Durdur';
-            btnRecord.classList.add('btn-stop-mode');
-        } else {
-            btnRecord.classList.add('btn-active-ptt');
-        }
-    };
+            if (mode === 'continuous') {
+                btnRecord.innerHTML = '<i class="fa fa-stop"></i> Durdur';
+                btnRecord.classList.add('btn-stop-mode');
+            } else {
+                btnRecord.classList.add('btn-active-ptt');
+            }
+        };
+    }
 
     function playBeep() {
         // Short "ding" sound (Base64 WAV) to avoid AudioContext policy issues
@@ -299,50 +324,52 @@ function initSpeechExtension() {
     // Netsipp logic moved to end of file to run globally
 
 
-    recognition.onend = () => {
-        isRecording = false;
-        statusBadge.textContent = "Hazır";
-        statusBadge.className = "status-badge";
-        controlPanel.classList.remove('recording-active');
-        previewArea.style.display = 'none';
-        previewArea.textContent = '';
+    if (recognition) {
+        recognition.onend = () => {
+            isRecording = false;
+            statusBadge.textContent = "Hazır";
+            statusBadge.className = "status-badge";
+            controlPanel.classList.remove('recording-active');
+            previewArea.style.display = 'none';
+            previewArea.textContent = '';
 
-        if (mode === 'continuous') {
-            btnRecord.innerHTML = '<i class="fa fa-microphone"></i> Konuş';
-            btnRecord.classList.remove('btn-stop-mode');
-        } else {
-            btnRecord.classList.remove('btn-active-ptt');
-        }
-    };
-
-    recognition.onresult = (event) => {
-        let interimTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                // Determine if we need a space
-                const previousContent = targetArea.value;
-                const needsSpace = previousContent.length > 0 && !previousContent.endsWith(' ') && !previousContent.endsWith('\n');
-
-                targetArea.value += (needsSpace ? ' ' : '') + event.results[i][0].transcript;
-                previewArea.textContent = ''; // Clear preview when final
+            if (mode === 'continuous') {
+                btnRecord.innerHTML = '<i class="fa fa-microphone"></i> Konuş';
+                btnRecord.classList.remove('btn-stop-mode');
             } else {
-                interimTranscript += event.results[i][0].transcript;
+                btnRecord.classList.remove('btn-active-ptt');
             }
-        }
+        };
 
-        if (interimTranscript) {
-            previewArea.textContent = interimTranscript;
-        }
-    };
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
 
-    recognition.onerror = (event) => {
-        // Ignore 'no-speech' errors which happen frequently
-        if (event.error !== 'no-speech') {
-            console.error("Speech error", event.error);
-            statusBadge.textContent = "Hata";
-        }
-    };
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    // Determine if we need a space
+                    const previousContent = targetArea.value;
+                    const needsSpace = previousContent.length > 0 && !previousContent.endsWith(' ') && !previousContent.endsWith('\n');
+
+                    targetArea.value += (needsSpace ? ' ' : '') + event.results[i][0].transcript;
+                    previewArea.textContent = ''; // Clear preview when final
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            if (interimTranscript) {
+                previewArea.textContent = interimTranscript;
+            }
+        };
+
+        recognition.onerror = (event) => {
+            // Ignore 'no-speech' errors which happen frequently
+            if (event.error !== 'no-speech') {
+                console.error("Speech error", event.error);
+                statusBadge.textContent = "Hata";
+            }
+        };
+    }
 }
 
 function speakText(text) {
