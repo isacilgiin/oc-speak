@@ -733,6 +733,91 @@ function scanAndInjectNetsippButtons() {
 })();
 
 // ==============================================================
+// KULLANICI VERSİYON DEĞİŞTİRME DROPDOWN OVERRIDE SİSTEMİ
+// ==============================================================
+function overrideVersionDropdown() {
+    // Sayfadaki 'versiyondegistir' linklerini bul
+    const links = document.querySelectorAll('a[href*="versiyondegistir"]');
+    if (!links || links.length === 0) return;
+
+    let targetMenu = null;
+    let sampleHref = '';
+
+    for (const link of links) {
+        const href = link.getAttribute('href') || link.href;
+        if (href && href.includes('/versiyondegistir/')) {
+            const menu = link.closest('.dropdown-menu');
+            if (menu) {
+                targetMenu = menu;
+                sampleHref = href;
+                break;
+            }
+        }
+    }
+
+    if (!targetMenu) return;
+    if (targetMenu.getAttribute('data-oc-version-override') === 'true') return;
+
+    // Örnek URL: http://ilactarif.com.tr/versiyondegistir/kullanici@mail.com/TOKEN/ORDERID/ADMIN/99.0.0.0
+    // Sondaki sürüm numarasını atarak temel URL'i çıkarıyoruz
+    const parts = sampleHref.split('/');
+    if (parts.length < 2) return;
+    parts.pop(); // Son versiyon parametresini çıkar
+    const baseUrl = parts.join('/');
+
+    // Sayfada mevcut versiyon bilgisi varsa tespit et (#versiyonbilgi)
+    let currentVer = '';
+    const verBadge = document.getElementById('versiyonbilgi');
+    if (verBadge) {
+        const m = verBadge.textContent.match(/(\d+(\.\d+)*)/);
+        if (m) currentVer = m[1];
+    }
+
+    // İstenen versiyon listesi: 90, 93 ( New), 99, 100 ( kullanma), 101
+    const allowedVersions = [
+        { ver: '90.0.0.0', short: '90', label: ' 90 ' },
+        { ver: '93.0.0.0', short: '93', label: ' 93 ( New) ' },
+        { ver: '99.0.0.0', short: '99', label: ' 99 ' },
+        { ver: '100.0.0.0', short: '100', label: ' 100 ( kullanma) ', isWarning: true },
+        { ver: '101.0.0.0', short: '101', label: ' 101 ' }
+    ];
+
+    let newHtml = '';
+    allowedVersions.forEach(item => {
+        const isCurrent = currentVer && (currentVer === item.ver || currentVer.startsWith(item.short + '.'));
+        const activeBadge = isCurrent 
+            ? ' <span class="badge" style="background:#10b981; font-size:10px; margin-left:6px; vertical-align:middle;">Mevcut ✓</span>' 
+            : '';
+        const warningStyle = item.isWarning 
+            ? 'color:#ef4444; font-weight:600;' 
+            : '';
+        const confirmAttr = item.isWarning 
+            ? 'onclick="return confirm(\'Dikkat: 100 sürümü (kullanma) olarak belirtilmiştir. Yine de bu sürüme geçmek istiyor musunuz?\');"' 
+            : '';
+
+        newHtml += `<li><a href="${baseUrl}/${item.ver}" ${confirmAttr} style="${warningStyle}">${item.label}${activeBadge}</a></li>\n`;
+    });
+
+    targetMenu.innerHTML = newHtml;
+    targetMenu.setAttribute('data-oc-version-override', 'true');
+}
+
+// Global Observer to handle page loads and dynamic content for version dropdown
+(function initVersionDropdownObserver() {
+    overrideVersionDropdown();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', overrideVersionDropdown);
+    }
+
+    const observer = new MutationObserver(() => {
+        overrideVersionDropdown();
+    });
+
+    observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+})();
+
+// ==============================================================
 // HD WALLPAPER & GLASSMORPHISM SYSTEM (GLOBAL)
 // ==============================================================
 const WALLPAPER_PRESETS = [

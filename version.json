@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "name": "Opencart Sesli Not Asistanı",
-  "changelog": "Açılıp kapatılabilir Karanlık Mod (Dark Mode) ve gece cam efekti eklendi."
+  "changelog": "Kullanıcının Versiyonunu Değiştir menüsü optimize edildi (90, 93 New, 99, 100 kullanma, 101 eklendi)."
 }
