@@ -1,5 +1,5 @@
 {
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Satır arkaplan rengi (var(--td-row-bg)) artık 'Son Yorum' kartı ve satırına da birebir uygulanır. Gelişmiş Force Updater ile otomatik ve sorunsuz güncelleme desteği."
+  "changelog": "Mercury Portal: Son yorum alanı ferah ve okunabilir elevated beyaz karta dönüştürüldü; sol kenara satır durum rengini taşıyan akıllı 5px gösterge eklendi ve kayıtlar arasına 10px ayrım bandı koyularak alt alta binen kayıtların birbirine karışması tamamen önlendi."
 }
