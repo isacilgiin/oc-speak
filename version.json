@@ -1,5 +1,5 @@
 {
-  "version": "2.0.4",
+  "version": "2.0.5",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Bilet satırı ve son yorum alanı yekpare modern bir kart yapısına dönüştürüldü; her bilet satırına özel renkli çerçeve, 14px kart ayrım boşluğu ve saf beyaz alt yorum alanı uygulandı."
+  "changelog": "Mercury Portal: Kartlardaki metinler (İsim, Eczane, Telefonlar, Tarih, Ekleyen, Başlayan personel) daha büyük, kalın (bold) ve belirgin okunabilir hale getirildi."
 }

@@ -2124,6 +2124,73 @@ table.fluent-data-grid.td-colored-rows thead tr {
     padding-bottom: 10px !important;
     display: flex !important;
     align-items: center !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+}
+
+/* 1. İsim Sütunu (col-index 2) - Belirgin, kalın ve büyük */
+.fluent-data-grid.td-colored-rows td[col-index="2"],
+.fluent-data-grid.td-colored-rows td[col-index="2"] a {
+    font-size: 14.5px !important;
+    font-weight: 750 !important;
+    color: #0f172a !important;
+    text-decoration: none !important;
+    letter-spacing: -0.2px !important;
+}
+
+.fluent-data-grid.td-colored-rows td[col-index="2"] a:hover {
+    color: #2563eb !important;
+    text-decoration: underline !important;
+}
+
+/* 2. Eczane Sütunu (col-index 3) - Net ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="3"],
+.fluent-data-grid.td-colored-rows td[col-index="3"] a {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-decoration: none !important;
+    letter-spacing: -0.1px !important;
+}
+
+.fluent-data-grid.td-colored-rows td[col-index="3"] a:hover {
+    color: #2563eb !important;
+    text-decoration: underline !important;
+}
+
+/* 3. Telefonlar (col-index 4) - Sayılar daha iri ve monospace net */
+.fluent-data-grid.td-colored-rows td[col-index="4"] span {
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    font-family: 'Consolas', 'Segoe UI', monospace, sans-serif !important;
+    letter-spacing: 0.3px !important;
+}
+
+/* 4. Tarih (col-index 5) - Okunabilir ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="5"] span,
+.fluent-data-grid.td-colored-rows td[col-index="5"] {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    white-space: nowrap !important;
+}
+
+/* 5. Ekleyen (col-index 6) - Belirgin ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="6"] span,
+.fluent-data-grid.td-colored-rows td[col-index="6"] {
+    font-size: 13.5px !important;
+    font-weight: 650 !important;
+    color: #1e293b !important;
+}
+
+/* 6. Başlayan (col-index 7) - Personel ismi net, vurgulu ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="7"] span,
+.fluent-data-grid.td-colored-rows td[col-index="7"] {
+    font-size: 14px !important;
+    font-weight: 750 !important;
+    color: #0f172a !important;
 }
 
 /* Bekliyor durumundaki işler için (henüz personel rengi atanmamışsa) şık amber/sarı sol şerit ve beyaz zemin */
