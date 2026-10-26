@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal (panel.alternet.dev.alter.net.tr) tam entegrasyonu: Sesli Asistan, EczaneVPN Onay Notu, Müşteri Sözlü Onay Metni, Netsipp Entegrasyonu (tel: linkleri ve müşteri kartı arama), Modern Liste & Yorum Kartı Arayüzü, Hızlı EczaneVPN Chip Butonu ve Dark Mode / Duvar Kağıdı desteği."
+  "changelog": "Mercury Portal: Satır arkaplan rengi (var(--td-row-bg)) artık 'Son Yorum' kartı ve satırına da birebir uygulanır. Gelişmiş Force Updater ile otomatik ve sorunsuz güncelleme desteği."
 }

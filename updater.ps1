@@ -1,18 +1,20 @@
 # ==============================================================
-# Opencart Sesli Not Asistanı - Otomatik İndirici & Güncelleyici
+# Opencart & Mercury Sesli Not Asistanı - Otomatik İndirici & Güncelleyici
 # ==============================================================
 param (
     [string]$RepoOwner = "isacilgiin",
     [string]$RepoName = "oc-speak",
     [string]$Branch = "main",
-    [string]$TargetDir = "C:\speak"
+    [string]$TargetDir = "C:\speak",
+    [switch]$Force = $false
 )
 
 # Log dosyası
 $LogFile = Join-Path $TargetDir "updater.log"
-function Write-Log($msg) {
+function Write-Log($msg, [string]$color = "Cyan") {
     $time = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
     "[$time] $msg" | Out-File -FilePath $LogFile -Append -Encoding utf8
+    Write-Host " [+] $msg" -ForegroundColor $color
 }
 
 # 1. Klasör Kontrolü
@@ -20,22 +22,36 @@ if (!(Test-Path $TargetDir)) {
     New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 }
 
-$VersionUrl = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$Branch/version.json"
-$ZipUrl     = "https://github.com/$RepoOwner/$RepoName/archive/refs/heads/$Branch.zip"
+$ts = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+$VersionUrls = @(
+    "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$Branch/version.json?t=$ts",
+    "https://cdn.jsdelivr.net/gh/$RepoOwner/$RepoName@$Branch/version.json?t=$ts"
+)
+
+$ZipUrls = @(
+    "https://github.com/$RepoOwner/$RepoName/archive/refs/heads/$Branch.zip?t=$ts",
+    "https://codeload.github.com/$RepoOwner/$RepoName/zip/refs/heads/$Branch"
+)
 
 # 2. Uzak Sürüm Kontrolü
-try {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $remoteData = Invoke-RestMethod -Uri $VersionUrl -Headers @{ "Cache-Control" = "no-cache" }
-    $remoteVersion = $remoteData.version
-} catch {
-    Write-Log "Uzak surum bilgisi alinamadi (Internet veya repo kontrolu yapiniz): $($_.Exception.Message)"
-    exit 0
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$remoteVersion = ""
+
+foreach ($vUrl in $VersionUrls) {
+    try {
+        $remoteData = Invoke-RestMethod -Uri $vUrl -Headers @{ "Cache-Control" = "no-cache" } -TimeoutSec 10
+        if ($remoteData -and !([string]::IsNullOrWhiteSpace($remoteData.version))) {
+            $remoteVersion = $remoteData.version.Trim()
+            break
+        }
+    } catch {
+        # Sonraki URL dene
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($remoteVersion)) {
-    Write-Log "Uzak surum bilgisi bos geldi, guncelleme iptal."
-    exit 0
+    Write-Log "Uzak surum bilgisi alinamadi, Force parametresi aktifse dogrudan zip indirilecek." "Yellow"
+    $remoteVersion = "2.0.1"
 }
 
 # 3. Yerel Sürüm Kontrolü
@@ -46,13 +62,13 @@ if (Test-Path $ManifestPath) {
         $manifest = Get-Content $ManifestPath -Raw -Encoding utf8 | ConvertFrom-Json
         $localVersion = $manifest.version
     } catch {
-        Write-Log "manifest.json okunamadi: $($_.Exception.Message)"
+        Write-Log "manifest.json okunamadi: $($_.Exception.Message)" "Yellow"
     }
 }
 
 # 4. Sürüm Kıyaslama Fonksiyonu
 function Is-Newer($vRemote, $vLocal) {
-    if ([string]::IsNullOrWhiteSpace($vLocal)) { return $true }
+    if ([string]::IsNullOrWhiteSpace($vLocal) -or $vLocal -eq "0.0.0") { return $true }
     try {
         $rv = [version]$vRemote
         $lv = [version]$vLocal
@@ -62,55 +78,49 @@ function Is-Newer($vRemote, $vLocal) {
     }
 }
 
-if (!(Test-Path $ManifestPath) -or (Is-Newer $remoteVersion $localVersion)) {
-    Write-Log "Guncelleme/Kurulum baslatiliyor... (Mevcut: $localVersion -> Yeni: $remoteVersion)"
+$needsUpdate = $Force -or !(Test-Path $ManifestPath) -or (Is-Newer $remoteVersion $localVersion)
+
+if ($needsUpdate) {
+    Write-Log "Guncelleme/Kurulum baslatiliyor... (Mevcut: $localVersion -> Hedef: $remoteVersion)" "Green"
     
     $TempZip = Join-Path $env:TEMP "speak_update_$([Guid]::NewGuid().ToString('N')).zip"
     $TempExtract = Join-Path $env:TEMP "speak_extract_$([Guid]::NewGuid().ToString('N'))"
     
     try {
-        # ZIP indir - Invoke-WebRequest kullan (WebClient'tan daha güvenilir, AV uyumlu)
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        
         $downloadSuccess = $false
         
-        # Yöntem 1: Invoke-WebRequest
-        try {
-            Invoke-WebRequest -Uri $ZipUrl -OutFile $TempZip -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-            if ((Test-Path $TempZip) -and ((Get-Item $TempZip).Length -gt 100)) {
-                $downloadSuccess = $true
-            }
-        } catch {
-            Write-Log "Invoke-WebRequest basarisiz, WebClient deneniyor: $($_.Exception.Message)"
-        }
-        
-        # Yöntem 2: WebClient (yedek)
-        if (!$downloadSuccess) {
+        foreach ($zUrl in $ZipUrls) {
+            Write-Log "Dosyalar indiriliyor: $zUrl" "Gray"
             try {
-                $downloader = New-Object System.Net.WebClient
-                if ($null -eq $downloader) {
-                    throw "WebClient olusturulamadi"
-                }
-                $downloader.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                $downloader.DownloadFile($ZipUrl, $TempZip)
-                if ((Test-Path $TempZip) -and ((Get-Item $TempZip).Length -gt 100)) {
+                Invoke-WebRequest -Uri $zUrl -OutFile $TempZip -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" -TimeoutSec 20
+                if ((Test-Path $TempZip) -and ((Get-Item $TempZip).Length -gt 500)) {
                     $downloadSuccess = $true
+                    break
                 }
             } catch {
-                Write-Log "WebClient da basarisiz: $($_.Exception.Message)"
-            } finally {
-                if ($null -ne $downloader) { $downloader.Dispose() }
+                # WebClient ile dene
+                try {
+                    $wc = New-Object System.Net.WebClient
+                    $wc.Headers.Add("User-Agent", "Mozilla/5.0")
+                    $wc.DownloadFile($zUrl, $TempZip)
+                    $wc.Dispose()
+                    if ((Test-Path $TempZip) -and ((Get-Item $TempZip).Length -gt 500)) {
+                        $downloadSuccess = $true
+                        break
+                    }
+                } catch {}
             }
         }
         
         if (!$downloadSuccess) {
-            throw "ZIP dosyasi indirilemedi. Internet baglantisini ve antivirus ayarlarini kontrol edin."
+            throw "ZIP dosyasi indirilemedi. Lutfen internet baglantinizi kontrol edin."
         }
         
         # İndirilen ZIP'in SmartScreen engelini kaldır
         Unblock-File -Path $TempZip -ErrorAction SilentlyContinue
         
         # Arşivi aç
+        Write-Log "Arsiv aciliyor..." "Gray"
         Expand-Archive -Path $TempZip -DestinationPath $TempExtract -Force
         
         # GitHub ZIP içinde klasör adı: <RepoName>-<Branch>
@@ -124,13 +134,19 @@ if (!(Test-Path $ManifestPath) -or (Is-Newer $remoteVersion $localVersion)) {
             throw "Arsivden klasor cikarilamadi."
         }
         
-        # Dosyaları C:\speak klasörüne kopyala (Copy-Item -Recurse ile güvenli kopyalama)
-        Copy-Item -Path "$ExtractedSubFolder\*" -Destination $TargetDir -Recurse -Force
+        # Dosyaları C:\speak klasörüne kopyala
+        Write-Log "Dosyalar C:\speak klasorune yerlestiriliyor..." "Gray"
+        try {
+            Copy-Item -Path "$ExtractedSubFolder\*" -Destination $TargetDir -Recurse -Force -ErrorAction Stop
+        } catch {
+            # Robocopy yedek kopyalama (dosya kilitlerini daha iyi aşar)
+            robocopy "$ExtractedSubFolder" "$TargetDir" /E /NP /NFL /NDO /R:1 /W:1 | Out-Null
+        }
         
         # Dosyaların Windows SmartScreen / Defender engelini kaldır
         Get-ChildItem -Path $TargetDir -Recurse -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue
         
-        Write-Log "Guncelleme basariyla tamamlandi! Yeni surum: $remoteVersion"
+        Write-Log "Guncelleme basariyla tamamlandi! Surum: $remoteVersion" "Green"
 
         # Netsipp Registry Kaydı
         $RegFile = Join-Path $TargetDir "netsipp_protocol_register.reg"
@@ -139,12 +155,12 @@ if (!(Test-Path $ManifestPath) -or (Is-Newer $remoteVersion $localVersion)) {
         }
 
     } catch {
-        Write-Log "Hata olustu: $($_.Exception.Message)"
+        Write-Log "Hata olustu: $($_.Exception.Message)" "Red"
     } finally {
         # Temizlik
         Remove-Item -Path $TempZip -Force -ErrorAction SilentlyContinue
         Remove-Item -Path $TempExtract -Recurse -Force -ErrorAction SilentlyContinue
     }
 } else {
-    Write-Log "Sistem zaten guncel (Surum: $localVersion)"
+    Write-Log "Sistem zaten en guncel surumde (Surum: $localVersion)" "Green"
 }

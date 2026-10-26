@@ -23,15 +23,16 @@ if not exist "%TARGET_DIR%" (
     mkdir "%TARGET_DIR%"
 )
 
-:: 3. Guncelleyiciyi Indir ve Calistir (AV uyumlu)
+:: 3. Guncelleyiciyi Indir ve Calistir (AV uyumlu, Force Guncelleme)
 echo [+] GitHub uzerinden en guncel dosyalar kontrol ediliyor...
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; " ^
-    "$u = 'https://raw.githubusercontent.com/isacilgiin/oc-speak/main/updater.ps1'; " ^
+    "$t = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); " ^
+    "$u = 'https://raw.githubusercontent.com/isacilgiin/oc-speak/main/updater.ps1?t=' + $t; " ^
     "$f = 'C:\speak\updater.ps1'; " ^
-    "try { Invoke-WebRequest -Uri $u -OutFile $f -UseBasicParsing -UserAgent 'Mozilla/5.0' } " ^
-    "catch { try { (New-Object Net.WebClient).DownloadFile($u, $f) } catch {} }; " ^
-    "if (Test-Path $f) { Unblock-File -Path $f -ErrorAction SilentlyContinue; & $f }"
+    "try { Invoke-WebRequest -Uri $u -OutFile $f -UseBasicParsing -UserAgent 'Mozilla/5.0' -TimeoutSec 15 } " ^
+    "catch { try { (New-Object Net.WebClient).DownloadFile('https://cdn.jsdelivr.net/gh/isacilgiin/oc-speak@main/updater.ps1', $f) } catch {} }; " ^
+    "if (Test-Path $f) { Unblock-File -Path $f -ErrorAction SilentlyContinue; & $f -Force }"
 
 :: 4. Netsipp Protokol Kaydi
 if exist "%TARGET_DIR%\netsipp_protocol_register.reg" (
