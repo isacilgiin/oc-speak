@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Opencart Sesli Not Asistanı",
-  "version": "1.5.0",
-  "description": "Opencart müşteri notları, EczaneVPN asistanı, HD Duvar Kağıdı ve Versiyon Yöneticisi.",
+  "name": "Alternet Mercury & OpenCart Asistanı",
+  "version": "2.0.0",
+  "description": "Mercury Portal ve OpenCart için Sesli Asistan, EczaneVPN Onay Notu, Netsipp Arama, Modern Liste & Not Görünümü.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -14,12 +14,18 @@
     "service_worker": "background.js"
   },
   "host_permissions": [
+    "*://panel.alternet.dev.alter.net.tr/*",
+    "*://*.alter.net.tr/*",
+    "*://*.alternet.com.tr/*",
     "*://magaza.alternet.com.tr/*",
     "*://*/*"
   ],
   "content_scripts": [
     {
       "matches": [
+        "*://panel.alternet.dev.alter.net.tr/*",
+        "*://*.alter.net.tr/*",
+        "*://*.alternet.com.tr/*",
         "*://magaza.alternet.com.tr/*",
         "file:///*"
       ],

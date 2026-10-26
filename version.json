@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
-  "name": "Opencart Sesli Not Asistanı",
-  "changelog": "Modern Versiyon Yöneticisi eklendi (Temiz Öne Çıkanlar ve Tüm/Eski Versiyonlar arama & filtreleme modal penceresi)."
+  "version": "2.0.0",
+  "name": "Alternet Mercury & OpenCart Asistanı",
+  "changelog": "Mercury Portal (panel.alternet.dev.alter.net.tr) tam entegrasyonu: Sesli Asistan, EczaneVPN Onay Notu, Müşteri Sözlü Onay Metni, Netsipp Entegrasyonu (tel: linkleri ve müşteri kartı arama), Modern Liste & Yorum Kartı Arayüzü, Hızlı EczaneVPN Chip Butonu ve Dark Mode / Duvar Kağıdı desteği."
 }

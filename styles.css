@@ -2010,3 +2010,483 @@ body.oc-dark-mode .oc-old-ver-footer-close {
 body.oc-dark-mode .oc-old-ver-footer-close:hover {
     background: #475569;
 }
+
+/* ==============================================================
+   MERCURY PORTAL (ALTERNET DEV PANEL) - MODERN SAAS REDESIGN
+   ============================================================== */
+
+/* --- 1. Summary & Metric KPI Cards (.td-summary) --- */
+.td-summary {
+    display: flex !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+}
+
+.td-summary .td-stat {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    min-width: 160px !important;
+}
+
+.td-summary .td-stat:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+.td-summary .td-stat::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4) !important;
+}
+
+/* --- 2. Support List Table Overrides (.fluent-data-grid) --- */
+/* Reset the harsh purple background */
+.fluent-data-grid.td-colored-rows,
+table.fluent-data-grid.td-colored-rows {
+    --td-row-bg: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+    background: #ffffff !important;
+}
+
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"],
+table.fluent-data-grid.td-colored-rows thead tr {
+    background: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+}
+
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]) {
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background 0.15s ease !important;
+}
+
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]):hover {
+    background: rgba(241, 245, 249, 0.8) !important;
+}
+
+/* Status Pills (.td-pill) */
+.td-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 3px 10px !important;
+    border-radius: 9999px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px !important;
+}
+
+.td-pill-waiting {
+    background: #fef3c7 !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
+}
+
+.td-pill-waiting::before {
+    content: "" !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: #f59e0b !important;
+    box-shadow: 0 0 6px #f59e0b !important;
+    animation: oc-pill-pulse 2s infinite !important;
+}
+
+@keyframes oc-pill-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* --- 3. The List Comment Row (.td-comment-row) - Elevated Card --- */
+.td-comment-fullrow,
+th.td-comment-fullrow,
+td.td-comment-fullrow {
+    padding: 6px 12px !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.td-comment-row {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #3b82f6 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    margin: 4px 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 12px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+.td-comment-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+}
+
+.td-comment-cell {
+    font-size: 13px !important;
+    color: #1e293b !important;
+    line-height: 1.5 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    flex: 1 !important;
+}
+
+.td-comment-author {
+    background: #e2e8f0 !important;
+    color: #334155 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+/* Phone & Call Buttons in List */
+.td-comment-copy {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #64748b !important;
+    border-radius: 6px !important;
+    padding: 3px 6px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.15s ease !important;
+}
+
+.td-comment-copy:hover {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #94a3b8 !important;
+}
+
+/* Netsipp Call Button on List */
+.td-comment-call,
+a.td-comment-call {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border: 1px solid #059669 !important;
+    border-radius: 6px !important;
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25) !important;
+    transition: all 0.15s ease !important;
+}
+
+.td-comment-call:hover,
+a.td-comment-call:hover {
+    background: #059669 !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4) !important;
+    transform: translateY(-1px) !important;
+    color: #ffffff !important;
+}
+
+/* WhatsApp Button */
+.td-comment-wa,
+a.td-comment-wa {
+    background: #25d366 !important;
+    color: #ffffff !important;
+    border: 1px solid #1ebe5d !important;
+    border-radius: 6px !important;
+    padding: 3px 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.15s ease !important;
+}
+
+.td-comment-wa:hover,
+a.td-comment-wa:hover {
+    background: #1ebe5d !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Comment Input Area on List */
+.td-comment-input {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.td-comment-input fluent-field {
+    min-width: 320px !important;
+}
+
+/* --- 4. Customer Detail Note Entry Screen Overrides --- */
+/* Assistant panel in Mercury */
+.mercury-assistant-panel {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 14px 18px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Mercury Textarea */
+fluent-field fluent-textarea,
+fluent-textarea {
+    border-radius: 10px !important;
+    font-family: inherit !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Quick Action Buttons Row */
+div[style*="gap:4px"] fluent-button {
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+div[style*="gap:4px"] fluent-button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Quick EczaneVPN Chip */
+.mercury-quick-chip.mercury-chip-vpn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    padding: 3px 12px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    transition: all 0.2s ease !important;
+}
+
+.mercury-quick-chip.mercury-chip-vpn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Customer Card GSM Netsipp Call Button */
+.mercury-card-netsipp-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 3px 9px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3) !important;
+    margin-left: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+.mercury-card-netsipp-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.45) !important;
+    transform: translateY(-1px) !important;
+    color: #ffffff !important;
+}
+
+/* History Notes Inline Netsipp Action Group */
+.mercury-hist-netsipp-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-left: 8px !important;
+    vertical-align: middle !important;
+}
+
+.mercury-hist-netsipp-btn {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    padding: 2px 7px !important;
+    border-radius: 5px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    transition: all 0.15s ease !important;
+}
+
+.mercury-hist-netsipp-btn:hover {
+    background: #059669 !important;
+    color: #ffffff !important;
+    transform: scale(1.05) !important;
+}
+
+.mercury-hist-copy-btn {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    border-radius: 5px !important;
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+.mercury-hist-copy-btn:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+/* History Table Styling */
+table.history-comments {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+table.history-comments thead tr {
+    background: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    font-weight: 700 !important;
+}
+
+table.history-comments tbody tr:nth-child(even) {
+    background: #fafafa !important;
+}
+
+/* --- 5. Mercury Portal Dark Mode --- */
+body.oc-dark-mode {
+    --colorNeutralBackground1: #0f172a !important;
+    --colorNeutralBackground2: #1e293b !important;
+    --colorNeutralBackground3: #334155 !important;
+    --colorNeutralForeground1: #f8fafc !important;
+    --colorNeutralForeground2: #cbd5e1 !important;
+    --colorNeutralForeground3: #94a3b8 !important;
+    --colorNeutralStroke1: rgba(255, 255, 255, 0.12) !important;
+    --colorNeutralStroke2: rgba(255, 255, 255, 0.08) !important;
+    --td-row-bg: #1e293b !important;
+}
+
+body.oc-dark-mode .td-summary .td-stat {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+}
+
+body.oc-dark-mode .fluent-data-grid.td-colored-rows,
+body.oc-dark-mode table.fluent-data-grid.td-colored-rows {
+    --td-row-bg: #1e293b !important;
+    background: #0f172a !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.oc-dark-mode .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"],
+body.oc-dark-mode table.fluent-data-grid.td-colored-rows thead tr {
+    background: #1e293b !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+    color: #cbd5e1 !important;
+}
+
+body.oc-dark-mode .td-comment-fullrow {
+    background: #0f172a !important;
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.oc-dark-mode .td-comment-row {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    border-left-color: #60a5fa !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.oc-dark-mode .td-comment-cell {
+    color: #f1f5f9 !important;
+}
+
+body.oc-dark-mode .td-comment-label {
+    background: rgba(96, 165, 250, 0.15) !important;
+    color: #93c5fd !important;
+}
+
+body.oc-dark-mode .td-comment-author {
+    background: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+body.oc-dark-mode .td-comment-copy {
+    background: #334155 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #cbd5e1 !important;
+}
+
+body.oc-dark-mode .mercury-assistant-panel {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.oc-dark-mode table.history-comments {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.oc-dark-mode table.history-comments thead tr {
+    background: #1e293b !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.oc-dark-mode table.history-comments tbody tr:nth-child(even) {
+    background: #162032 !important;
+}
+
+/* --- 6. Wallpaper Glassmorphism in Mercury --- */
+body.oc-has-wallpaper .td-summary .td-stat,
+body.oc-has-wallpaper .fluent-data-grid.td-colored-rows,
+body.oc-has-wallpaper .mercury-assistant-panel,
+body.oc-has-wallpaper table.history-comments,
+body.oc-has-wallpaper .fluent-card,
+body.oc-has-wallpaper .vpn-card {
+    backdrop-filter: blur(12px) !important;
+    background: rgba(255, 255, 255, var(--oc-card-opacity, 0.85)) !important;
+}
+
+body.oc-dark-mode.oc-has-wallpaper .td-summary .td-stat,
+body.oc-dark-mode.oc-has-wallpaper .fluent-data-grid.td-colored-rows,
+body.oc-dark-mode.oc-has-wallpaper .mercury-assistant-panel,
+body.oc-dark-mode.oc-has-wallpaper table.history-comments,
+body.oc-dark-mode.oc-has-wallpaper .fluent-card,
+body.oc-dark-mode.oc-has-wallpaper .vpn-card {
+    background: rgba(15, 23, 42, var(--oc-card-opacity, 0.85)) !important;
+}

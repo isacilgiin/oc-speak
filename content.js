@@ -1,14 +1,98 @@
 // Always initialize extension components (Compatible with Chrome, Opera, Edge, Brave)
 initSpeechExtension();
 
+// Helper to detect note area in both OpenCart (#input-comment) and Mercury Portal (fluent-textarea)
+function findTargetNoteArea() {
+    const ocArea = document.getElementById('input-comment');
+    if (ocArea) return { element: ocArea, type: 'opencart' };
+
+    const mercurySelectors = [
+        'fluent-textarea[placeholder*="açıklayıcı"]',
+        'fluent-textarea[placeholder*="aciklayici"]',
+        '#profil-panel fluent-textarea',
+        'fluent-field fluent-textarea',
+        'fluent-textarea'
+    ];
+    for (const sel of mercurySelectors) {
+        const el = document.querySelector(sel);
+        if (el) return { element: el, type: 'mercury' };
+    }
+    return null;
+}
+
+// Helper to safely read text from note area
+function readTargetNoteText(targetInfo) {
+    if (!targetInfo || !targetInfo.element) return '';
+    const el = targetInfo.element;
+    if (targetInfo.type === 'mercury') {
+        const inner = el.shadowRoot ? el.shadowRoot.querySelector('textarea') : el.querySelector('textarea');
+        return (el.value || (inner ? inner.value : '') || '');
+    }
+    return el.value || '';
+}
+
+// Helper to write text and trigger two-way binding for both OpenCart and Blazor Fluent UI
+function writeToNoteArea(targetInfo, text, mode) {
+    if (!targetInfo || !targetInfo.element) return;
+    const el = targetInfo.element;
+
+    if (targetInfo.type === 'opencart') {
+        const cur = el.value || '';
+        if (mode === 'append') {
+            el.value = cur.trim().length > 0 ? cur + (cur.endsWith('\n') ? '' : '\n') + text : text;
+        } else if (mode === 'append-inline') {
+            const needsSpace = cur.length > 0 && !cur.endsWith(' ') && !cur.endsWith('\n');
+            el.value += (needsSpace ? ' ' : '') + text;
+        } else {
+            el.value = text;
+        }
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.focus();
+    } else {
+        // Mercury Portal (Fluent Web Component / Blazor)
+        const inner = el.shadowRoot ? el.shadowRoot.querySelector('textarea') : (el.querySelector('textarea') || el);
+        const cur = el.value || (inner ? inner.value : '') || '';
+        let finalVal = text;
+
+        if (mode === 'append') {
+            finalVal = cur.trim().length > 0 ? cur + (cur.endsWith('\n') ? '' : '\n') + text : text;
+        } else if (mode === 'append-inline') {
+            const needsSpace = cur.length > 0 && !cur.endsWith(' ') && !cur.endsWith('\n');
+            finalVal = cur + (needsSpace ? ' ' : '') + text;
+        }
+
+        el.value = finalVal;
+        if (inner && inner !== el) {
+            inner.value = finalVal;
+        }
+
+        const inputEvt = new Event('input', { bubbles: true, composed: true });
+        const changeEvt = new Event('change', { bubbles: true, composed: true });
+        el.dispatchEvent(inputEvt);
+        el.dispatchEvent(changeEvt);
+        if (inner && inner !== el) {
+            inner.dispatchEvent(inputEvt);
+            inner.dispatchEvent(changeEvt);
+        }
+        try { el.focus(); } catch (e) {}
+    }
+}
+
 function initSpeechExtension() {
-    // Locate the target textarea
-    const targetArea = document.getElementById('input-comment');
-    if (!targetArea) return;
+    // Locate the target textarea in OpenCart or Mercury Portal
+    const targetInfo = findTargetNoteArea();
+    if (!targetInfo) return;
+
+    // Prevent duplicate panel injection
+    if (document.getElementById('speech-control-panel')) return;
+
+    const targetArea = targetInfo.element;
 
     // Create the control container
     const controlPanel = document.createElement('div');
     controlPanel.id = 'speech-control-panel';
+    controlPanel.className = targetInfo.type === 'mercury' ? 'mercury-assistant-panel' : 'oc-assistant-panel';
     controlPanel.innerHTML = `
         <div class="speech-header">
             <span>🎙️ Sesli Asistan</span>
@@ -54,11 +138,14 @@ function initSpeechExtension() {
         </div>
     `;
 
-    // Inject panel before the textarea's parent (or inside the column)
-    targetArea.parentNode.insertBefore(controlPanel, targetArea);
-
-    // Add margin to textarea to separate it from panel
-    targetArea.style.marginTop = '15px';
+    // Inject panel before the textarea's container
+    if (targetInfo.type === 'mercury') {
+        const fieldContainer = targetArea.closest('fluent-field') || targetArea;
+        fieldContainer.parentNode.insertBefore(controlPanel, fieldContainer);
+    } else {
+        targetArea.parentNode.insertBefore(controlPanel, targetArea);
+        targetArea.style.marginTop = '15px';
+    }
 
 
     // Speech Recognition Setup (Opera / Chrome / Edge uyumlu)
@@ -185,7 +272,7 @@ function initSpeechExtension() {
     // Read Button
     btnRead.addEventListener('click', (e) => {
         e.preventDefault();
-        const textToRead = targetArea.value;
+        const textToRead = readTargetNoteText(targetInfo);
         if (textToRead.trim() !== "") {
             speakText(textToRead);
         }
@@ -195,7 +282,7 @@ function initSpeechExtension() {
     if (btnVpn) {
         btnVpn.addEventListener('click', async (e) => {
             e.preventDefault();
-            await insertEczaneVpnNote(targetArea, btnVpn);
+            await insertEczaneVpnNote(targetInfo, btnVpn);
         });
     }
 
@@ -233,14 +320,7 @@ function initSpeechExtension() {
         btnScriptInsert.addEventListener('click', (e) => {
             e.preventDefault();
             const text = getEczaneVpnScriptPlainText();
-            if (targetArea.value.trim().length > 0) {
-                targetArea.value = targetArea.value + '\n\n' + text;
-            } else {
-                targetArea.value = text;
-            }
-            targetArea.dispatchEvent(new Event('input', { bubbles: true }));
-            targetArea.dispatchEvent(new Event('change', { bubbles: true }));
-            targetArea.focus();
+            writeToNoteArea(targetInfo, text, 'append');
 
             btnScriptInsert.innerHTML = '<i class="fa fa-check"></i> Yazıldı!';
             setTimeout(() => {
@@ -346,11 +426,7 @@ function initSpeechExtension() {
 
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    // Determine if we need a space
-                    const previousContent = targetArea.value;
-                    const needsSpace = previousContent.length > 0 && !previousContent.endsWith(' ') && !previousContent.endsWith('\n');
-
-                    targetArea.value += (needsSpace ? ' ' : '') + event.results[i][0].transcript;
+                    writeToNoteArea(targetInfo, event.results[i][0].transcript, 'append-inline');
                     previewArea.textContent = ''; // Clear preview when final
                 } else {
                     interimTranscript += event.results[i][0].transcript;
@@ -407,17 +483,15 @@ function saveLastNetsippNumber(num) {
 }
 
 function findPhoneFromHistoryNotes() {
-    const containers = document.querySelectorAll('#history_customer, #tableana');
+    const containers = document.querySelectorAll('#history_customer, #tableana, table.history-comments, .history-comments');
     for (const container of containers) {
-        const rows = container.querySelectorAll('tr');
+        const rows = container.querySelectorAll('tr, .fluent-data-grid-row');
         for (const row of rows) {
             const text = row.innerText || row.textContent;
             if (!text) continue;
 
-            // Matches real-world formats from team notes:
-            // "NUMARA : 05300372795", "numara:0530-846-90-26(ali)", "numara:532-696-62-95(ALİ)",
-            // "Çağrı No : +90 553 707 64 16", "|| Çağrı No : 0535-228-00-00", "numara:0216-352-33-95"
-            const match = text.match(/(?:çağrı\s*no|cagri\s*no|çağrı\s*numarası|cagri\s*numarasi|\bnumara|\btel|\btelefon)\s*[:=\-]?\s*([+0-9\s\-]{9,20})/i);
+            // Matches real-world formats from team notes including Mercury '|no:0533-590-15-89':
+            const match = text.match(/(?:çağrı\s*no|cagri\s*no|çağrı\s*numarası|cagri\s*numarasi|\bnumara|\btel|\btelefon|\|no)\s*[:=\-]?\s*([+0-9\s\-]{9,20})/i);
             if (match && match[1]) {
                 const formatted = formatPhoneNumber(match[1]);
                 if (formatted.length >= 10) {
@@ -430,7 +504,7 @@ function findPhoneFromHistoryNotes() {
 }
 
 function findAnyPhoneFromLatestHistoryNote() {
-    const rows = document.querySelectorAll('#history_customer tbody tr, #tableana tbody tr');
+    const rows = document.querySelectorAll('#history_customer tbody tr, #tableana tbody tr, table.history-comments tr, .history-comments tr');
     for (const row of rows) {
         const text = row.innerText || row.textContent;
         if (!text) continue;
@@ -461,15 +535,12 @@ async function detectPhoneNumber() {
                 }
             }
         }
-    } catch (err) {
-        // Clipboard read might be denied or empty, continue to next options
-    }
+    } catch (err) {}
 
-    // 2. Önceki Kayıt / Geçmiş Yorumlardaki "Çağrı No"
-    // Örnek: "eczanevpn kurulum isteniyor || Çağrı No: 0535-855-53-56"
+    // 2. Önceki Kayıt / Geçmiş Yorumlardaki "Çağrı No" veya "|no:"
     const historyCallPhone = findPhoneFromHistoryNotes();
     if (historyCallPhone) {
-        return { number: historyCallPhone, source: 'Çağrı No' };
+        return { number: historyCallPhone, source: 'Geçmiş Kayıt' };
     }
 
     // 3. Sayfada az önce tıklanan Netsipp arama/kopyalama numarası
@@ -483,13 +554,47 @@ async function detectPhoneNumber() {
         return { number: formatPhoneNumber(sessionPhone), source: 'Netsipp' };
     }
 
-    // 4. Geçmiş notlardaki en güncel genel telefon numarası
+    // 4. Mercury Portal: WhatsApp linki (örn: https://wa.me/905335901589)
+    const waLink = document.querySelector('fluent-anchor-button[href*="wa.me/"], a[href*="wa.me/"]');
+    if (waLink) {
+        const href = waLink.getAttribute('href') || waLink.href || '';
+        const m = href.match(/wa\.me\/([0-9]+)/);
+        if (m && m[1]) {
+            const formatted = formatPhoneNumber(m[1]);
+            if (formatted.length >= 10) return { number: formatted, source: 'WhatsApp' };
+        }
+    }
+
+    // 5. Mercury Portal: GSM / Telefon kart alanı
+    const spans = document.querySelectorAll('span, label');
+    for (const span of spans) {
+        const t = (span.textContent || '').trim();
+        if (t === 'GSM' || t === 'Telefon') {
+            const parent = span.parentElement;
+            if (parent) {
+                const text = parent.innerText || parent.textContent;
+                const match = text.match(/(0\s?5\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2})|(\(?5\d{2}\)?\s?\d{3}\s?\d{4})/);
+                if (match) {
+                    const formatted = formatPhoneNumber(match[0]);
+                    if (formatted.length >= 10) return { number: formatted, source: 'GSM Kartı' };
+                }
+            }
+        }
+    }
+
+    // 6. Geçmiş notlardaki en güncel genel telefon numarası
     const generalHistoryPhone = findAnyPhoneFromLatestHistoryNote();
     if (generalHistoryPhone) {
         return { number: generalHistoryPhone, source: 'Geçmiş Not' };
     }
 
-    // 5. Sayfadaki Müşteri Kartı Bilgileri (user-telephone, myInput, myInput2)
+    // 7. Sayfadaki Müşteri Kartı Bilgileri (OpenCart & Mercury Inputs)
+    const telInput = document.querySelector('fluent-text-input[type="tel"], input[type="tel"]');
+    if (telInput && telInput.value) {
+        const formatted = formatPhoneNumber(telInput.value);
+        if (formatted.length >= 10) return { number: formatted, source: 'Müşteri Kartı' };
+    }
+
     const phoneInput = document.getElementById('myInput');
     if (phoneInput && phoneInput.value) {
         const formatted = formatPhoneNumber(phoneInput.value);
@@ -522,12 +627,21 @@ async function detectPhoneNumber() {
         }
     }
 
-    // 6. Hiçbiri bulunamazsa varsayılan placeholder
+    // 8. Varsayılan
     return { number: '05555555555', source: 'Varsayılan' };
 }
 
 function getLoggedInPersonnel() {
-    // OpenCart left sidebar profile: <div id="profile"><h4>İsa Çılgın</h4>...
+    // 1. Mercury Portal: Üst bar kullanıcı profil linki
+    const mercuryUser = document.querySelector('fluent-link[href*="profil"], a[href*="/profil"]');
+    if (mercuryUser && mercuryUser.textContent.trim()) {
+        const name = mercuryUser.textContent.trim();
+        if (name && !name.toLowerCase().includes('çıkış')) {
+            return name.toLocaleUpperCase('tr-TR');
+        }
+    }
+
+    // 2. OpenCart sol menü profili: <div id="profile"><h4>İsa Çılgın</h4>...
     const profileH4 = document.querySelector('#column-left #profile h4, #profile h4, .user-profile h4');
     if (profileH4 && profileH4.textContent.trim()) {
         return profileH4.textContent.trim().toLocaleUpperCase('tr-TR');
@@ -541,7 +655,7 @@ function getLoggedInPersonnel() {
         }
     }
 
-    return 'MERDA';
+    return 'İSA';
 }
 
 function getApprovalTime() {
@@ -551,7 +665,7 @@ function getApprovalTime() {
     return `${hours}:${minutes}`;
 }
 
-async function insertEczaneVpnNote(targetArea, btnElem) {
+async function insertEczaneVpnNote(targetInfo, btnElem) {
     const time = getApprovalTime();
     const phoneInfo = await detectPhoneNumber();
     const phone = phoneInfo.number;
@@ -559,16 +673,7 @@ async function insertEczaneVpnNote(targetArea, btnElem) {
 
     const note = `ONAY SUNMA SAATİ: ${time} GÖRÜŞÜLEN NUMARA:${phone} GÖRÜŞEN PERSONEL :${personnel}`;
 
-    const prevValue = targetArea.value;
-    if (prevValue.trim().length > 0) {
-        targetArea.value = prevValue + '\n' + note;
-    } else {
-        targetArea.value = note;
-    }
-
-    targetArea.dispatchEvent(new Event('input', { bubbles: true }));
-    targetArea.dispatchEvent(new Event('change', { bubbles: true }));
-    targetArea.focus();
+    writeToNoteArea(targetInfo, note, 'append');
 
     if (btnElem) {
         btnElem.classList.add('btn-success-flash');
@@ -582,6 +687,16 @@ async function insertEczaneVpnNote(targetArea, btnElem) {
 }
 
 function getPersonnelProperName() {
+    // Mercury Portal
+    const mercuryUser = document.querySelector('fluent-link[href*="profil"], a[href*="/profil"]');
+    if (mercuryUser && mercuryUser.textContent.trim()) {
+        const name = mercuryUser.textContent.trim();
+        if (name && !name.toLowerCase().includes('çıkış')) {
+            return name;
+        }
+    }
+
+    // OpenCart
     const profileH4 = document.querySelector('#column-left #profile h4, #profile h4, .user-profile h4');
     if (profileH4 && profileH4.textContent.trim()) {
         return profileH4.textContent.trim();
@@ -721,42 +836,150 @@ function scanAndInjectNetsippButtons() {
     });
 }
 
-// Global Observer to handle page loads and dynamic content
-(function initNetsippObserver() {
-    // Initial scan
-    setTimeout(scanAndInjectNetsippButtons, 1500);
-
-    const observer = new MutationObserver(() => {
-        scanAndInjectNetsippButtons();
-    });
-
-    const targets = [
-        document.getElementById('history_customer'),
-        document.getElementById('tableana')
-    ];
-
-    let observed = false;
-    targets.forEach(target => {
-        if (target) {
-            observer.observe(target, { childList: true, subtree: true });
-            observed = true;
+// --- MERCURY PORTAL NETSIPP & QUICK BUTTONS INTEGRATION ---
+function upgradeMercuryNetsipp() {
+    // 1. Upgrade call buttons on the support list:
+    // <a class="td-comment-copy td-comment-call" href="tel:+905366012967" title="Ara (stopphone)">
+    const callLinks = document.querySelectorAll('a.td-comment-call, a[href^="tel:"]');
+    callLinks.forEach(link => {
+        const href = link.getAttribute('href') || '';
+        const title = link.getAttribute('title') || '';
+        const raw = href.replace(/^tel:/, '') || title;
+        const clean = formatPhoneNumber(raw);
+        if (clean && clean.length >= 10) {
+            link.href = `netsipp://${clean}`;
+            link.setAttribute('title', `Netsipp ile Ara: ${clean}`);
+            link.classList.add('mercury-netsipp-btn');
+            link.onclick = (e) => {
+                saveLastNetsippNumber(clean);
+            };
         }
     });
 
-    // Fallback: If specific tables aren't found yet (dynamic page load), watch the body
-    if (!observed) {
-        const bodyObserver = new MutationObserver((mutations, obs) => {
-            const hist = document.getElementById('history_customer');
-            const setup = document.getElementById('tableana');
-            if (hist || setup) {
-                scanAndInjectNetsippButtons();
-                if (hist) observer.observe(hist, { childList: true, subtree: true });
-                if (setup) observer.observe(setup, { childList: true, subtree: true });
-                obs.disconnect();
-            }
-        });
-        bodyObserver.observe(document.body, { childList: true, subtree: true });
+    // 2. Mercury Customer Card GSM: Inject direct Netsipp button next to WhatsApp if missing
+    const waAnchor = document.querySelector('fluent-anchor-button[href*="wa.me/"], a[href*="wa.me/"]');
+    if (waAnchor && !document.getElementById('mercury-gsm-netsipp-btn')) {
+        const href = waAnchor.getAttribute('href') || waAnchor.href || '';
+        const match = href.match(/wa\.me\/([0-9]+)/);
+        if (match && match[1]) {
+            const clean = formatPhoneNumber(match[1]);
+            const netsippBtn = document.createElement('a');
+            netsippBtn.id = 'mercury-gsm-netsipp-btn';
+            netsippBtn.className = 'mercury-card-netsipp-btn';
+            netsippBtn.href = `netsipp://${clean}`;
+            netsippBtn.title = `Netsipp ile Ara: ${clean}`;
+            netsippBtn.innerHTML = `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.72 11.72 0 003.66.59 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.66 1 1 0 01-.24 1.02l-2.23 2.21z"/>
+                </svg>
+                <span>Netsipp Ara</span>
+            `;
+            netsippBtn.onclick = () => {
+                saveLastNetsippNumber(clean);
+            };
+            waAnchor.parentNode.insertBefore(netsippBtn, waAnchor.nextSibling);
+        }
     }
+
+    // 3. Mercury History Table notes (table.history-comments):
+    // Inject Netsipp call & copy chips into notes with phone numbers
+    const histCells = document.querySelectorAll('table.history-comments td.multiline-text, .history-comments td.multiline-text');
+    const phoneRegex = /(0\s?5\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2})|(\b5\d{9}\b)|(\+90[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2})/g;
+
+    histCells.forEach(cell => {
+        if (cell.querySelector('.mercury-hist-netsipp-group')) return;
+        const text = cell.innerText || cell.textContent || '';
+        const matches = text.match(phoneRegex);
+        if (matches) {
+            matches.forEach(number => {
+                const clean = formatPhoneNumber(number);
+                if (clean && clean.length >= 10) {
+                    const group = document.createElement('span');
+                    group.className = 'mercury-hist-netsipp-group';
+                    group.innerHTML = `
+                        <a href="netsipp://${clean}" class="mercury-hist-netsipp-btn" title="Netsipp ile Ara: ${clean}">
+                            <i class="fa fa-phone"></i> Netsipp
+                        </a>
+                        <button type="button" class="mercury-hist-copy-btn" title="Kopyala">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                    `;
+                    const callA = group.querySelector('.mercury-hist-netsipp-btn');
+                    callA.onclick = () => saveLastNetsippNumber(clean);
+
+                    const copyB = group.querySelector('.mercury-hist-copy-btn');
+                    copyB.onclick = (e) => {
+                        e.preventDefault();
+                        saveLastNetsippNumber(clean);
+                        navigator.clipboard.writeText(clean);
+                        copyB.innerHTML = '<i class="fa fa-check"></i>';
+                        setTimeout(() => { copyB.innerHTML = '<i class="fa fa-copy"></i>'; }, 1000);
+                    };
+
+                    cell.appendChild(group);
+                }
+            });
+        }
+    });
+}
+
+function injectMercuryQuickEczaneVpnBtn() {
+    if (document.getElementById('mercury-btn-quick-vpn')) return;
+
+    // Look for quick buttons bar under fluent-textarea
+    const quickBar = document.querySelector('fluent-field + div[style*="flex-wrap"], fluent-textarea + div[style*="flex-wrap"], div[style*="gap:4px"]');
+    if (!quickBar) return;
+
+    const vpnBtn = document.createElement('button');
+    vpnBtn.type = 'button';
+    vpnBtn.id = 'mercury-btn-quick-vpn';
+    vpnBtn.className = 'mercury-quick-chip mercury-chip-vpn';
+    vpnBtn.setAttribute('title', 'EczaneVPN Onay Notunu Otomatik Ekle (Saat, Personel, Numara)');
+    vpnBtn.innerHTML = '<span>🛡️ EczaneVPN Onay</span>';
+
+    vpnBtn.onclick = async (e) => {
+        e.preventDefault();
+        const targetInfo = findTargetNoteArea();
+        if (targetInfo) {
+            await insertEczaneVpnNote(targetInfo, vpnBtn);
+        }
+    };
+
+    quickBar.insertBefore(vpnBtn, quickBar.firstChild);
+}
+
+// Master refresh for both OpenCart and Mercury dynamic SPA pages
+function refreshAllExtensions() {
+    initSpeechExtension();
+    injectMercuryQuickEczaneVpnBtn();
+    upgradeMercuryNetsipp();
+    scanAndInjectNetsippButtons();
+    overrideVersionDropdown();
+}
+
+// Debounced global observer
+(function initGlobalAppObserver() {
+    setTimeout(refreshAllExtensions, 800);
+    setTimeout(refreshAllExtensions, 2000);
+
+    let debounceTimer = null;
+    const globalObserver = new MutationObserver(() => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            refreshAllExtensions();
+        }, 350);
+    });
+
+    if (document.body) {
+        globalObserver.observe(document.body, { childList: true, subtree: true });
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            globalObserver.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+
+    window.addEventListener('popstate', () => setTimeout(refreshAllExtensions, 300));
+    window.addEventListener('hashchange', () => setTimeout(refreshAllExtensions, 300));
 })();
 
 // ==============================================================
