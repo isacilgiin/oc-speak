@@ -1,5 +1,5 @@
 {
-  "version": "2.0.3",
+  "version": "2.0.4",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Duvar kağıdı ve karanlık mod butonları kaldırıldı; Üzerime Al ve aksiyon butonları pro SaaS tasarımına kavuşturuldu; Son Yorum kartı içi beyaz kalacak şekilde personelin satır renginde zarif bir çerçeveye alındı ve tüm telefon numaralarında Netsipp Ara butonunun eksiksiz çıkması sağlandı."
+  "changelog": "Mercury Portal: Bilet satırı ve son yorum alanı yekpare modern bir kart yapısına dönüştürüldü; her bilet satırına özel renkli çerçeve, 14px kart ayrım boşluğu ve saf beyaz alt yorum alanı uygulandı."
 }

@@ -2050,43 +2050,95 @@ body.oc-dark-mode .oc-old-ver-footer-close:hover {
     background: linear-gradient(90deg, #3b82f6, #06b6d4) !important;
 }
 
-/* --- 2. Support List Table Overrides (.fluent-data-grid) --- */
+/* --- 2. Support List Table Overrides (.fluent-data-grid as Card Deck) --- */
 .fluent-data-grid.td-colored-rows,
 table.fluent-data-grid.td-colored-rows {
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
 }
 
-.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row {
-    background-color: transparent !important;
+.fluent-data-grid.td-colored-rows thead {
+    display: contents !important;
 }
 
-/* Upper ticket info columns (1-8): Clean status background with subtle bottom border */
-.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row > td:not(.td-comment-fullrow) {
-    background-color: var(--td-row-bg) !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
+.fluent-data-grid.td-colored-rows tbody {
+    display: contents !important;
 }
 
+/* Header Row: Floating clean bar */
 .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"],
 table.fluent-data-grid.td-colored-rows thead tr {
-    background: #f8fafc !important;
-    border-bottom: 2px solid #e2e8f0 !important;
+    display: grid !important;
+    grid-column: 1 / -1 !important;
+    grid-template-columns: subgrid !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
     font-weight: 700 !important;
     color: #475569 !important;
+    padding: 2px 0 !important;
 }
 
-/* Kayıtlar arası belirgin 8px nötr gri ayrım şeridi - birbiriyle karışmasını kesinlikle önler */
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"] th {
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px 6px !important;
+}
+
+/* Hide 9th header in header row */
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"] th.td-comment-fullrow,
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"] th[col-index="9"] {
+    display: none !important;
+}
+
+/* Data Rows as Cards: Her bilet satırı ve altındaki son yorumu kapsayan yekpare modern KART */
 .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]) {
-    border-bottom: 8px solid #e2e8f0 !important;
-    transition: background 0.15s ease !important;
+    display: grid !important;
+    grid-column: 1 / -1 !important;
+    grid-template-columns: subgrid !important;
+    margin-bottom: 14px !important;
+    background: #ffffff !important;
+    border: 2px solid var(--td-row-bg, #cbd5e1) !important;
+    border-left: 6px solid var(--td-row-bg, #2563eb) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+    overflow: hidden !important;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]):hover {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Upper ticket info columns (1-8): Personelin durum rengini alır */
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]) > td:not(.td-comment-fullrow) {
+    grid-row: 1 !important;
+    background-color: var(--td-row-bg, #f8fafc) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Bekliyor durumundaki işler için (henüz personel rengi atanmamışsa) şık amber/sarı sol şerit ve beyaz zemin */
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([style*="--td-row-bg"]):not([row-type="header"]) {
+    border-color: #e2e8f0 !important;
+    border-left: 6px solid #f59e0b !important;
+    background: #ffffff !important;
+}
+
+.fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([style*="--td-row-bg"]):not([row-type="header"]) > td:not(.td-comment-fullrow) {
+    background-color: #ffffff !important;
 }
 
 .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]):hover > td:not(.td-comment-fullrow) {
-    filter: brightness(0.97) !important;
+    filter: brightness(0.98) !important;
 }
 
 /* Status Pills (.td-pill) */
@@ -2122,35 +2174,39 @@ table.fluent-data-grid.td-colored-rows thead tr {
     50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-/* --- 3. The List Comment Row (.td-comment-row) - İçi Beyaz, Çerçevesi Satır Renginde Kart --- */
+/* --- 3. The List Comment Row - Kartın alt yarısı, ferah saf beyaz zemin --- */
+.fluent-data-grid.td-colored-rows td.td-comment-fullrow,
+.fluent-data-grid.td-colored-rows td[col-index="9"],
 .td-comment-fullrow,
 th.td-comment-fullrow,
 td.td-comment-fullrow {
-    padding: 6px 14px 12px 14px !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    padding: 8px 16px 10px 16px !important;
     background: #ffffff !important;
     background-color: #ffffff !important;
-    border-bottom: 8px solid #e2e8f0 !important;
+    border-bottom: none !important;
 }
 
+/* Kart içerisindeki yorum satırı - Çerçeve artık kartın bütününde olduğu için iç içe çift çerçeve kaldırıldı */
 .td-comment-row {
-    background: #ffffff !important;
-    background-color: #ffffff !important;
-    border: 2px solid var(--td-row-bg, #cbd5e1) !important;
-    border-left: 6px solid var(--td-row-bg, #2563eb) !important;
-    border-radius: 10px !important;
-    padding: 10px 16px !important;
-    margin: 2px 0 4px 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 2px 0 !important;
+    margin: 0 !important;
     display: flex !important;
     flex-wrap: wrap !important;
     align-items: center !important;
     gap: 12px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+    transition: none !important;
 }
 
 .td-comment-row:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
-    transform: translateY(-1px) !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 .td-comment-label {
