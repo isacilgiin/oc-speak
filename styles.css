@@ -2079,9 +2079,9 @@ table.fluent-data-grid.td-colored-rows thead tr {
     color: #475569 !important;
 }
 
-/* Kayıtlar arası belirgin 10px ayrım şeridi - birbiriyle karışmasını kesinlikle önler */
+/* Kayıtlar arası belirgin 8px nötr gri ayrım şeridi - birbiriyle karışmasını kesinlikle önler */
 .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]) {
-    border-bottom: 10px solid #f1f5f9 !important;
+    border-bottom: 8px solid #e2e8f0 !important;
     transition: background 0.15s ease !important;
 }
 
@@ -2122,35 +2122,35 @@ table.fluent-data-grid.td-colored-rows thead tr {
     50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-/* --- 3. The List Comment Row (.td-comment-row) - Ferah Elevated Beyaz Kart Tasarımı --- */
+/* --- 3. The List Comment Row (.td-comment-row) - İçi Beyaz, Çerçevesi Satır Renginde Kart --- */
 .td-comment-fullrow,
 th.td-comment-fullrow,
 td.td-comment-fullrow {
     padding: 6px 14px 12px 14px !important;
     background: #ffffff !important;
     background-color: #ffffff !important;
-    border-bottom: 10px solid #f1f5f9 !important;
+    border-bottom: 8px solid #e2e8f0 !important;
 }
 
 .td-comment-row {
     background: #ffffff !important;
     background-color: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-    border-left: 5px solid var(--td-row-bg, #3b82f6) !important;
+    border: 2px solid var(--td-row-bg, #cbd5e1) !important;
+    border-left: 6px solid var(--td-row-bg, #2563eb) !important;
     border-radius: 10px !important;
     padding: 10px 16px !important;
-    margin: 2px 0 2px 0 !important;
+    margin: 2px 0 4px 0 !important;
     display: flex !important;
     flex-wrap: wrap !important;
     align-items: center !important;
     gap: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
 }
 
 .td-comment-row:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
-    border-color: rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-1px) !important;
 }
 
 .td-comment-label {
@@ -2358,7 +2358,7 @@ div[style*="gap:4px"] fluent-button:hover {
     transform: translateY(-1px) !important;
 }
 
-/* Customer Card GSM Netsipp Call Button */
+/* Customer Card & Support List GSM Netsipp Call Button */
 .mercury-card-netsipp-btn {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
     color: #ffffff !important;
@@ -2371,7 +2371,8 @@ div[style*="gap:4px"] fluent-button:hover {
     align-items: center !important;
     gap: 5px !important;
     box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3) !important;
-    margin-left: 6px !important;
+    margin-left: 4px !important;
+    white-space: nowrap !important;
     transition: all 0.2s ease !important;
 }
 
@@ -2444,126 +2445,129 @@ table.history-comments tbody tr:nth-child(even) {
     background: #fafafa !important;
 }
 
-/* --- 5. Mercury Portal Dark Mode --- */
-body.oc-dark-mode {
-    --colorNeutralBackground1: #0f172a !important;
-    --colorNeutralBackground2: #1e293b !important;
-    --colorNeutralBackground3: #334155 !important;
-    --colorNeutralForeground1: #f8fafc !important;
-    --colorNeutralForeground2: #cbd5e1 !important;
-    --colorNeutralForeground3: #94a3b8 !important;
-    --colorNeutralStroke1: rgba(255, 255, 255, 0.12) !important;
-    --colorNeutralStroke2: rgba(255, 255, 255, 0.08) !important;
-    --td-row-bg: #1e293b !important;
+/* --- 5. PRO ACTION BUTTONS (Üzerime Al, Tamamla, Bırak, Takip) --- */
+/* 1. Üzerime Al Butonu - Modern Elevated SaaS Pill */
+fluent-button[title*="zerime Al"],
+fluent-button[aria-label*="zerime Al"],
+td[col-index="8"] fluent-button[appearance="primary"] {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    font-size: 11.5px !important;
+    letter-spacing: 0.3px !important;
+    padding: 3px 12px !important;
+    height: 28px !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3) !important;
+    border: 1px solid #1d4ed8 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-body.oc-dark-mode .td-summary .td-stat {
-    background: #1e293b !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: #f8fafc !important;
+fluent-button[title*="zerime Al"]:hover,
+fluent-button[aria-label*="zerime Al"]:hover,
+td[col-index="8"] fluent-button[appearance="primary"]:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45) !important;
+    transform: translateY(-1px) scale(1.02) !important;
 }
 
-body.oc-dark-mode .fluent-data-grid.td-colored-rows,
-body.oc-dark-mode table.fluent-data-grid.td-colored-rows {
-    --td-row-bg: #1e293b !important;
-    background: #0f172a !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+/* 2. Tamamla Butonu (Yeşil Onay Rozeti) */
+fluent-button[title*="Tamamla"],
+fluent-button[aria-label="Tamamla"] {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
 }
 
-body.oc-dark-mode .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row:not([row-type="header"]) {
-    border-bottom: 10px solid #090d16 !important;
+fluent-button[title*="Tamamla"]:hover,
+fluent-button[aria-label="Tamamla"]:hover {
+    background: #10b981 !important;
+    border-color: #059669 !important;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.35) !important;
+    transform: scale(1.1) !important;
 }
 
-body.oc-dark-mode .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row > td:not(.td-comment-fullrow) {
-    background-color: var(--td-row-bg, #1e293b) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+fluent-button[title*="Tamamla"]:hover svg,
+fluent-button[aria-label="Tamamla"]:hover svg {
+    fill: #ffffff !important;
 }
 
-body.oc-dark-mode .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"],
-body.oc-dark-mode table.fluent-data-grid.td-colored-rows thead tr {
-    background: #1e293b !important;
-    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
-    color: #cbd5e1 !important;
+/* 3. Bırak Butonu (Kırmızı Çarpı Rozeti) */
+fluent-button[title*="Bırak"],
+fluent-button[title*="rak"],
+fluent-button[aria-label="Bırak"] {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
 }
 
-body.oc-dark-mode .td-comment-fullrow {
-    background: #0f172a !important;
-    background-color: #0f172a !important;
-    border-bottom: 10px solid #090d16 !important;
+fluent-button[title*="Bırak"]:hover,
+fluent-button[title*="rak"]:hover,
+fluent-button[aria-label="Bırak"]:hover {
+    background: #ef4444 !important;
+    border-color: #dc2626 !important;
+    box-shadow: 0 3px 8px rgba(239, 68, 68, 0.35) !important;
+    transform: scale(1.1) !important;
 }
 
-body.oc-dark-mode .td-comment-row {
-    background: #1e293b !important;
-    background-color: #1e293b !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-left: 5px solid var(--td-row-bg, #38bdf8) !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+fluent-button[title*="Bırak"]:hover svg,
+fluent-button[title*="rak"]:hover svg,
+fluent-button[aria-label="Bırak"]:hover svg {
+    fill: #ffffff !important;
 }
 
-body.oc-dark-mode .td-comment-cell {
-    color: #f8fafc !important;
+/* 4. Takip (Havale) Butonu (Sarı/Amber Rozet) */
+fluent-button[title*="Takip"],
+fluent-button[aria-label*="Takip"] {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
 }
 
-body.oc-dark-mode .td-comment-label {
-    background: rgba(56, 189, 248, 0.15) !important;
-    color: #38bdf8 !important;
-    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+fluent-button[title*="Takip"]:hover,
+fluent-button[aria-label*="Takip"]:hover {
+    background: #f59e0b !important;
+    border-color: #d97706 !important;
+    box-shadow: 0 3px 8px rgba(245, 158, 11, 0.35) !important;
+    transform: scale(1.1) !important;
 }
 
-body.oc-dark-mode .td-comment-author {
-    background: #334155 !important;
-    color: #cbd5e1 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+fluent-button[title*="Takip"]:hover svg,
+fluent-button[aria-label*="Takip"]:hover svg {
+    fill: #ffffff !important;
 }
 
-body.oc-dark-mode .td-comment-copy {
-    background: #334155 !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
-    color: #cbd5e1 !important;
-}
-
-body.oc-dark-mode .td-comment-input fluent-text-input,
-body.oc-dark-mode .td-comment-input input {
-    background: #0f172a !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    color: #f8fafc !important;
-}
-
-body.oc-dark-mode .mercury-assistant-panel {
-    background: #1e293b !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-}
-
-body.oc-dark-mode table.history-comments {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.oc-dark-mode table.history-comments thead tr {
-    background: #1e293b !important;
-    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-body.oc-dark-mode table.history-comments tbody tr:nth-child(even) {
-    background: #162032 !important;
-}
-
-/* --- 6. Wallpaper Glassmorphism in Mercury --- */
-body.oc-has-wallpaper .td-summary .td-stat,
-body.oc-has-wallpaper .fluent-data-grid.td-colored-rows,
-body.oc-has-wallpaper .mercury-assistant-panel,
-body.oc-has-wallpaper table.history-comments,
-body.oc-has-wallpaper .fluent-card,
-body.oc-has-wallpaper .vpn-card {
-    backdrop-filter: blur(12px) !important;
-    background: rgba(255, 255, 255, var(--oc-card-opacity, 0.85)) !important;
-}
-
-body.oc-dark-mode.oc-has-wallpaper .td-summary .td-stat,
-body.oc-dark-mode.oc-has-wallpaper .fluent-data-grid.td-colored-rows,
-body.oc-dark-mode.oc-has-wallpaper .mercury-assistant-panel,
-body.oc-dark-mode.oc-has-wallpaper table.history-comments,
-body.oc-dark-mode.oc-has-wallpaper .fluent-card,
-body.oc-dark-mode.oc-has-wallpaper .vpn-card {
-    background: rgba(15, 23, 42, var(--oc-card-opacity, 0.85)) !important;
+/* --- 6. DUVAR KAĞIDI VE KARANLIK MOD BUTONLARINI GİZLE --- */
+#btn-oc-wallpaper-trigger,
+.btn-oc-wallpaper-trigger,
+#oc-wallpaper-modal,
+#oc-wallpaper-modal-backdrop,
+.wallpaper-card,
+#btn-panel-wallpaper {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Mercury Portal ve OpenCart için Sesli Asistan, EczaneVPN Onay Notu, Netsipp Arama, Modern Liste & Not Görünümü.",
   "permissions": [
     "activeTab",
