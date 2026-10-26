@@ -1,5 +1,5 @@
 {
-  "version": "2.0.6",
+  "version": "2.0.7",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Yorumlardaki tüm randevu/arama saatleri (16:00, 16.00, 09:00, 09.00 vs.) otomatik algılanıp rengarenk, büyük ve neon yanıp sönen (pulsing rainbow) canlı rozetlere dönüştürüldü."
+  "changelog": "Mercury Portal: Küçük ekranlar ve laptoplar için tam responsive koruması sağlandı; telefon numaralarının dikey harf harf katlanması engellendi, min-width değerleri sabitlendi ve kart içi scrollbar sorunu giderildi."
 }

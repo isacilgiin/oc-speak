@@ -2057,6 +2057,12 @@ table.fluent-data-grid.td-colored-rows {
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible !important;
+    min-width: 1060px !important; /* Küçük ekranlarda tablonun ezilip bozulmasını kesinlikle engeller */
+}
+
+/* Sayfa içeriği kapsayıcısı: küçük ekranda kartları ezmek yerine doğal yatay kaydırma sağlar */
+.fluent-layout-item[area="content"] {
+    overflow-x: auto !important;
 }
 
 .fluent-data-grid.td-colored-rows thead {
@@ -2081,12 +2087,14 @@ table.fluent-data-grid.td-colored-rows thead tr {
     font-weight: 700 !important;
     color: #475569 !important;
     padding: 2px 0 !important;
+    min-width: 1060px !important;
 }
 
 .fluent-data-grid.td-colored-rows tr.fluent-data-grid-row[row-type="header"] th {
     display: flex !important;
     align-items: center !important;
     padding: 8px 6px !important;
+    white-space: nowrap !important;
 }
 
 /* Hide 9th header in header row */
@@ -2106,7 +2114,8 @@ table.fluent-data-grid.td-colored-rows thead tr {
     border-left: 6px solid var(--td-row-bg, #2563eb) !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
-    overflow: hidden !important;
+    overflow: visible !important; /* Kartın içinde çirkin scrollbar çıkmasını engeller */
+    min-width: 1060px !important;
     transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
 }
 
@@ -2129,7 +2138,19 @@ table.fluent-data-grid.td-colored-rows thead tr {
     color: #0f172a !important;
 }
 
-/* 1. İsim Sütunu (col-index 2) - Belirgin, kalın ve büyük */
+/* 1. Durum Sütunu (col-index 1) */
+.fluent-data-grid.td-colored-rows td[col-index="1"] {
+    min-width: 80px !important;
+    white-space: nowrap !important;
+}
+
+/* 2. İsim Sütunu (col-index 2) - Belirgin, kalın ve büyük */
+.fluent-data-grid.td-colored-rows td[col-index="2"] {
+    min-width: 140px !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="2"],
 .fluent-data-grid.td-colored-rows td[col-index="2"] a {
     font-size: 14.5px !important;
@@ -2144,7 +2165,13 @@ table.fluent-data-grid.td-colored-rows thead tr {
     text-decoration: underline !important;
 }
 
-/* 2. Eczane Sütunu (col-index 3) - Net ve kalın */
+/* 3. Eczane Sütunu (col-index 3) - Net ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="3"] {
+    min-width: 130px !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="3"],
 .fluent-data-grid.td-colored-rows td[col-index="3"] a {
     font-size: 14px !important;
@@ -2159,16 +2186,45 @@ table.fluent-data-grid.td-colored-rows thead tr {
     text-decoration: underline !important;
 }
 
-/* 3. Telefonlar (col-index 4) - Sayılar daha iri ve monospace net */
+/* 4. Telefonlar (col-index 4) - Asla harf harf alt alta katlanamaz! */
+.fluent-data-grid.td-colored-rows td[col-index="4"] {
+    min-width: 290px !important;
+    white-space: nowrap !important;
+}
+
+.fluent-data-grid.td-colored-rows td[col-index="4"] .fluent-stack-vertical {
+    width: auto !important;
+    min-width: 285px !important;
+    gap: 4px !important;
+}
+
+.fluent-data-grid.td-colored-rows td[col-index="4"] .fluent-stack-horizontal {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    gap: 4px !important;
+    width: auto !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="4"] span {
     font-size: 13.5px !important;
     font-weight: 700 !important;
     color: #0f172a !important;
     font-family: 'Consolas', 'Segoe UI', monospace, sans-serif !important;
     letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    min-width: 105px !important;
 }
 
-/* 4. Tarih (col-index 5) - Okunabilir ve kalın */
+/* 5. Tarih (col-index 5) - Okunabilir ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="5"] {
+    min-width: 120px !important;
+    white-space: nowrap !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="5"] span,
 .fluent-data-grid.td-colored-rows td[col-index="5"] {
     font-size: 13px !important;
@@ -2177,7 +2233,12 @@ table.fluent-data-grid.td-colored-rows thead tr {
     white-space: nowrap !important;
 }
 
-/* 5. Ekleyen (col-index 6) - Belirgin ve kalın */
+/* 6. Ekleyen (col-index 6) - Belirgin ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="6"] {
+    min-width: 65px !important;
+    white-space: nowrap !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="6"] span,
 .fluent-data-grid.td-colored-rows td[col-index="6"] {
     font-size: 13.5px !important;
@@ -2185,12 +2246,29 @@ table.fluent-data-grid.td-colored-rows thead tr {
     color: #1e293b !important;
 }
 
-/* 6. Başlayan (col-index 7) - Personel ismi net, vurgulu ve kalın */
+/* 7. Başlayan (col-index 7) - Personel ismi net, vurgulu ve kalın */
+.fluent-data-grid.td-colored-rows td[col-index="7"] {
+    min-width: 75px !important;
+    white-space: nowrap !important;
+}
+
 .fluent-data-grid.td-colored-rows td[col-index="7"] span,
 .fluent-data-grid.td-colored-rows td[col-index="7"] {
     font-size: 14px !important;
     font-weight: 750 !important;
     color: #0f172a !important;
+}
+
+/* 8. Aksiyon (col-index 8) */
+.fluent-data-grid.td-colored-rows td[col-index="8"] {
+    min-width: 110px !important;
+    white-space: nowrap !important;
+}
+
+.fluent-data-grid.td-colored-rows td[col-index="8"] .fluent-stack-horizontal {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
 }
 
 /* Bekliyor durumundaki işler için (henüz personel rengi atanmamışsa) şık amber/sarı sol şerit ve beyaz zemin */
