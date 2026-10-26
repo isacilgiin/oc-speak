@@ -1,4 +1,4 @@
-﻿// Always initialize extension components (Compatible with Chrome, Opera, Edge, Brave)
+// Always initialize extension components (Compatible with Chrome, Opera, Edge, Brave)
 initSpeechExtension();
 
 // Helper to detect note area in both OpenCart (#input-comment) and Mercury Portal (fluent-textarea)
@@ -979,11 +979,110 @@ function injectMercuryQuickEczaneVpnBtn() {
     quickBar.insertBefore(vpnBtn, quickBar.firstChild);
 }
 
+// --- RENGARENK VE YANIP SÖNEN SAAT ROZETLERİ (16:00, 16.00, 09:00, 09.00 vs.) ---
+const COMMENT_TIME_REGEX = /(?<!\d[.:])\b([01]?[0-9]|2[0-3])[:.]([0-5][0-9])\b(?![.:]\d)/g;
+
+function createClockIcon() {
+    const span = document.createElement('span');
+    span.className = 'oc-time-icon';
+    span.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-1px; margin-right:3px;"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 11H7v-2h4V6h2v7z"/></svg>`;
+    return span;
+}
+
+function processTextNodesInCell(root) {
+    if (!root) return;
+    const walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                const parent = node.parentElement;
+                if (!parent) return NodeFilter.FILTER_REJECT;
+                // Saat rozeti, buton, link veya yazar alanı içerisindeki metinleri atla
+                if (parent.closest('.td-comment-time') || 
+                    parent.closest('.td-comment-author') || 
+                    parent.closest('button') || 
+                    parent.closest('a') || 
+                    parent.closest('fluent-button') ||
+                    parent.closest('fluent-anchor-button')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                COMMENT_TIME_REGEX.lastIndex = 0;
+                if (COMMENT_TIME_REGEX.test(node.textContent)) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_SKIP;
+            }
+        }
+    );
+
+    const nodesToReplace = [];
+    let currentNode;
+    while ((currentNode = walker.nextNode())) {
+        nodesToReplace.push(currentNode);
+    }
+
+    nodesToReplace.forEach(textNode => {
+        const text = textNode.textContent;
+        COMMENT_TIME_REGEX.lastIndex = 0;
+        let match;
+        let lastIdx = 0;
+        const fragments = [];
+
+        while ((match = COMMENT_TIME_REGEX.exec(text)) !== null) {
+            const timeStr = match[0];
+            const startIdx = match.index;
+
+            if (startIdx > lastIdx) {
+                fragments.push(document.createTextNode(text.substring(lastIdx, startIdx)));
+            }
+
+            const badge = document.createElement('span');
+            badge.className = 'td-comment-time td-blink';
+            badge.setAttribute('data-auto-time', timeStr);
+            badge.appendChild(createClockIcon());
+            badge.appendChild(document.createTextNode(timeStr));
+            fragments.push(badge);
+
+            lastIdx = startIdx + timeStr.length;
+        }
+
+        if (fragments.length > 0) {
+            if (lastIdx < text.length) {
+                fragments.push(document.createTextNode(text.substring(lastIdx)));
+            }
+            const parent = textNode.parentNode;
+            if (parent) {
+                const frag = document.createDocumentFragment();
+                fragments.forEach(f => frag.appendChild(f));
+                parent.replaceChild(frag, textNode);
+            }
+        }
+    });
+}
+
+function highlightAllCommentTimes() {
+    // 1. Mercury Portal'ın kendi eklediği mevcut saat rozetlerine (.td-comment-time) saat ikonu ekle
+    const existingTimes = document.querySelectorAll('.td-comment-time, .td-blink');
+    existingTimes.forEach(el => {
+        if (!el.querySelector('.oc-time-icon')) {
+            el.insertBefore(createClockIcon(), el.firstChild);
+        }
+    });
+
+    // 2. Yorum hücrelerindeki (16.00, 09.00, 14:45, 17.30 gibi) yakalanmamış tüm saatleri tespit edip rozete dönüştür
+    const commentCells = document.querySelectorAll('.td-comment-cell, td.td-comment-fullrow, table.history-comments td.multiline-text, .history-comments td.multiline-text');
+    commentCells.forEach(cell => {
+        processTextNodesInCell(cell);
+    });
+}
+
 // Master refresh for both OpenCart and Mercury dynamic SPA pages
 function refreshAllExtensions() {
     initSpeechExtension();
     injectMercuryQuickEczaneVpnBtn();
     upgradeMercuryNetsipp();
+    highlightAllCommentTimes();
     scanAndInjectNetsippButtons();
     overrideVersionDropdown();
 }
