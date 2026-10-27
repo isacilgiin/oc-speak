@@ -1177,6 +1177,157 @@ function highlightAllCommentKurulum() {
     }
 }
 
+// ==============================================================
+// MERCURY PORTAL HIZLI AŞAĞI / YUKARI KAYDIRMA BUTONU (FAB)
+// ==============================================================
+function injectMercuryScrollButton() {
+    // Mercury portal veya destek listesi sayfasında mıyız kontrol et
+    const isMercury = document.querySelector('.fluent-layout-item[area="content"], .fluent-data-grid, table.fluent-data-grid, .fluent-data-grid-row, .fluent-layout');
+    if (!isMercury) return;
+
+    let btn = document.getElementById('oc-mercury-scroll-btn');
+    if (btn) {
+        updateScrollButtonState();
+        return;
+    }
+
+    btn = document.createElement('button');
+    btn.id = 'oc-mercury-scroll-btn';
+    btn.type = 'button';
+    btn.className = 'oc-mercury-scroll-btn';
+    btn.setAttribute('title', 'En Alta İn (Aşağı Kaydır)');
+    btn.setAttribute('aria-label', 'En Alta İn');
+
+    btn.innerHTML = `
+        <span class="oc-scroll-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+                <polyline points="19 13 12 20 5 13"></polyline>
+            </svg>
+        </span>
+    `;
+
+    document.body.appendChild(btn);
+
+    // Tıklama ile En Alta veya En Başa pürüzsüz kaydırma
+    let isDragging = false;
+    let hasMoved = false;
+    let startX = 0, startY = 0;
+    let initialRight = 28, initialBottom = 28;
+
+    btn.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = btn.getBoundingClientRect();
+        initialRight = window.innerWidth - rect.right;
+        initialBottom = window.innerHeight - rect.bottom;
+        hasMoved = false;
+
+        function onMouseMove(moveEvent) {
+            const dx = moveEvent.clientX - startX;
+            const dy = moveEvent.clientY - startY;
+            if (!hasMoved && Math.hypot(dx, dy) > 4) {
+                hasMoved = true;
+                isDragging = true;
+                btn.classList.add('is-dragging');
+            }
+            if (hasMoved) {
+                const newRight = Math.max(10, Math.min(window.innerWidth - 60, initialRight - dx));
+                const newBottom = Math.max(10, Math.min(window.innerHeight - 60, initialBottom - dy));
+                btn.style.right = `${newRight}px`;
+                btn.style.bottom = `${newBottom}px`;
+            }
+        }
+
+        function onMouseUp() {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            btn.classList.remove('is-dragging');
+            setTimeout(() => {
+                isDragging = false;
+                hasMoved = false;
+            }, 60);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    });
+
+    btn.addEventListener('click', (e) => {
+        if (isDragging || hasMoved) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        const content = document.querySelector('.fluent-layout-item[area="content"]');
+        const isAtBottom = btn.classList.contains('is-at-bottom');
+
+        if (isAtBottom) {
+            // Yukarı kaydır
+            if (content) {
+                content.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            // Aşağı kaydır
+            if (content) {
+                content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+            }
+            window.scrollTo({ 
+                top: document.documentElement.scrollHeight || document.body.scrollHeight, 
+                behavior: 'smooth' 
+            });
+        }
+    });
+
+    // Scroll dinleyicilerini bağla
+    window.addEventListener('scroll', updateScrollButtonState, { passive: true });
+    const content = document.querySelector('.fluent-layout-item[area="content"]');
+    if (content) {
+        content.addEventListener('scroll', updateScrollButtonState, { passive: true });
+    }
+
+    updateScrollButtonState();
+}
+
+function updateScrollButtonState() {
+    const btn = document.getElementById('oc-mercury-scroll-btn');
+    if (!btn) return;
+
+    const content = document.querySelector('.fluent-layout-item[area="content"]');
+    let current = 0;
+    let max = 0;
+
+    if (content && content.scrollHeight > content.clientHeight + 40) {
+        current = content.scrollTop;
+        max = content.scrollHeight - content.clientHeight;
+    } else {
+        current = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        max = (document.documentElement.scrollHeight || document.body.scrollHeight || 0) - window.innerHeight;
+    }
+
+    // Eğer sayfada kaydırma gerekmiyorsa gizle
+    if (max <= 50) {
+        btn.classList.add('oc-scroll-hidden');
+        return;
+    } else {
+        btn.classList.remove('oc-scroll-hidden');
+    }
+
+    // Dibe yaklaşıldıysa (son 160px) yukarı oka çevir, aksi halde aşağı ok
+    if (current >= max - 160) {
+        btn.classList.add('is-at-bottom');
+        btn.setAttribute('title', 'En Başa Dön (Yukarı Kaydır)');
+        btn.setAttribute('aria-label', 'En Başa Dön');
+    } else {
+        btn.classList.remove('is-at-bottom');
+        btn.setAttribute('title', 'En Alta İn (Aşağı Kaydır)');
+        btn.setAttribute('aria-label', 'En Alta İn');
+    }
+}
+
 // Master refresh for both OpenCart and Mercury dynamic SPA pages
 function refreshAllExtensions() {
     initSpeechExtension();
@@ -1186,6 +1337,7 @@ function refreshAllExtensions() {
     highlightAllCommentKurulum();
     scanAndInjectNetsippButtons();
     overrideVersionDropdown();
+    injectMercuryScrollButton();
 }
 
 // Debounced global observer

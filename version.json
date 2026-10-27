@@ -1,5 +1,5 @@
 {
-  "version": "2.0.8",
+  "version": "2.0.9",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Sadece Son Yorum: alanında geçen 'Kurulum' kelimeleri için kırmızı tonlarında ışıltılı ve canlı animasyonlu KURULUM rozeti eklendi; Teknik Destek listesinin en altına son kartın yapışmaması için 1 kart boyu ferah boşluk bırakıldı."
+  "changelog": "Mercury Portal: Sayfayı tek tıkla en aşağıya (ve en dibe gelindiğinde en yukarıya) pürüzsüz kaydıran, sürüklenebilir ve modern yuvarlak akıllı kaydırma butonu (FAB) eklendi."
 }
