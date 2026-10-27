@@ -1,5 +1,5 @@
 {
-  "version": "2.0.7",
+  "version": "2.0.8",
   "name": "Alternet Mercury & OpenCart Asistanı",
-  "changelog": "Mercury Portal: Küçük ekranlar ve laptoplar için tam responsive koruması sağlandı; telefon numaralarının dikey harf harf katlanması engellendi, min-width değerleri sabitlendi ve kart içi scrollbar sorunu giderildi."
+  "changelog": "Mercury Portal: Sadece Son Yorum: alanında geçen 'Kurulum' kelimeleri için kırmızı tonlarında ışıltılı ve canlı animasyonlu KURULUM rozeti eklendi; Teknik Destek listesinin en altına son kartın yapışmaması için 1 kart boyu ferah boşluk bırakıldı."
 }

@@ -998,8 +998,9 @@ function processTextNodesInCell(root) {
             acceptNode: function(node) {
                 const parent = node.parentElement;
                 if (!parent) return NodeFilter.FILTER_REJECT;
-                // Saat rozeti, buton, link veya yazar alanı içerisindeki metinleri atla
+                // Saat rozeti, kurulum rozeti, buton, link veya yazar alanı içerisindeki metinleri atla
                 if (parent.closest('.td-comment-time') || 
+                    parent.closest('.td-comment-kurulum') ||
                     parent.closest('.td-comment-author') || 
                     parent.closest('button') || 
                     parent.closest('a') || 
@@ -1077,12 +1078,112 @@ function highlightAllCommentTimes() {
     });
 }
 
+// --- SADECE SON YORUM: ALANINDAKİ CANLI KIRMIZI TONLARINDA IŞILTILI KURULUM ROZETİ ---
+const COMMENT_KURULUM_REGEX = /(?<![\p{L}\p{N}])kurulum(?:u)?(?![\p{L}\p{N}])/giu;
+
+function createInstallIcon() {
+    const span = document.createElement('span');
+    span.className = 'oc-install-icon';
+    span.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-1px; margin-right:3px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
+    return span;
+}
+
+function processKurulumInCell(root) {
+    if (!root) return;
+    const walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                const parent = node.parentElement;
+                if (!parent) return NodeFilter.FILTER_REJECT;
+                // Saat rozeti, kurulum rozeti, buton, link veya yazar alanı içerisindeki metinleri atla
+                if (parent.closest('.td-comment-time') || 
+                    parent.closest('.td-comment-kurulum') ||
+                    parent.closest('.td-comment-author') || 
+                    parent.closest('button') || 
+                    parent.closest('a') || 
+                    parent.closest('fluent-button') ||
+                    parent.closest('fluent-anchor-button')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                COMMENT_KURULUM_REGEX.lastIndex = 0;
+                if (COMMENT_KURULUM_REGEX.test(node.textContent)) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_SKIP;
+            }
+        }
+    );
+
+    const nodesToReplace = [];
+    let currentNode;
+    while ((currentNode = walker.nextNode())) {
+        nodesToReplace.push(currentNode);
+    }
+
+    nodesToReplace.forEach(textNode => {
+        const text = textNode.textContent;
+        COMMENT_KURULUM_REGEX.lastIndex = 0;
+        let match;
+        let lastIdx = 0;
+        const fragments = [];
+
+        while ((match = COMMENT_KURULUM_REGEX.exec(text)) !== null) {
+            const matchedWord = match[0];
+            const startIdx = match.index;
+
+            if (startIdx > lastIdx) {
+                fragments.push(document.createTextNode(text.substring(lastIdx, startIdx)));
+            }
+
+            const badge = document.createElement('span');
+            badge.className = 'td-comment-kurulum td-blink-red';
+            badge.setAttribute('data-auto-kurulum', 'true');
+            badge.appendChild(createInstallIcon());
+            badge.appendChild(document.createTextNode('KURULUM'));
+            fragments.push(badge);
+
+            lastIdx = startIdx + matchedWord.length;
+        }
+
+        if (fragments.length > 0) {
+            if (lastIdx < text.length) {
+                fragments.push(document.createTextNode(text.substring(lastIdx)));
+            }
+            const parent = textNode.parentNode;
+            if (parent) {
+                const frag = document.createDocumentFragment();
+                fragments.forEach(f => frag.appendChild(f));
+                parent.replaceChild(frag, textNode);
+            }
+        }
+    });
+}
+
+function highlightAllCommentKurulum() {
+    // SADECE "Son Yorum:" alanında ara (kartın altındaki yorum hücresi)
+    const sonYorumCells = document.querySelectorAll('.td-comment-cell');
+    if (sonYorumCells && sonYorumCells.length > 0) {
+        sonYorumCells.forEach(cell => {
+            processKurulumInCell(cell);
+        });
+    } else {
+        // Fallback: .td-comment-cell bulunamazsa td.td-comment-fullrow içinde ara
+        const fullrows = document.querySelectorAll('td.td-comment-fullrow, td[col-index="9"]');
+        fullrows.forEach(cell => {
+            processKurulumInCell(cell);
+        });
+    }
+}
+
 // Master refresh for both OpenCart and Mercury dynamic SPA pages
 function refreshAllExtensions() {
     initSpeechExtension();
     injectMercuryQuickEczaneVpnBtn();
     upgradeMercuryNetsipp();
     highlightAllCommentTimes();
+    highlightAllCommentKurulum();
     scanAndInjectNetsippButtons();
     overrideVersionDropdown();
 }
